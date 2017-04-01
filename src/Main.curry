@@ -14,7 +14,7 @@ import AbstractCurry.Types
 import AbstractCurry.Files
 import AbstractCurry.Pretty(showCProg)
 import AbstractCurry.Select(progName)
-import Char(isDigit,digitToInt)
+import Char(isDigit,digitToInt,isSpace)
 import Directory(copyFile,renameFile)
 import Distribution
 import FilePath
@@ -29,7 +29,7 @@ import TransContracts(transContracts)
 cppBanner :: String
 cppBanner = unlines [bannerLine,bannerText,bannerLine]
  where
-   bannerText = "Curry Preprocessor (version of 12/01/2017)"
+   bannerText = "Curry Preprocessor (version of 01/04/2017)"
    bannerLine = take (length bannerText) (repeat '=')
 
 --- Preprocessor targets, i.e., kind of entities to be preprocessed:
@@ -187,7 +187,8 @@ preprocess opts modname orgfile infile outfile
   = do let savefile = orgfile++".SAVEPPORG"
        starttime <- getCPUTime
        renameFile orgfile savefile
-       srcprog <- readFile infile >>= return . replaceOptionsLine
+       srcprog <- readFile (if orgfile==infile then savefile else infile)
+                    >>= return . replaceOptionsLine
        -- remove currypp option to avoid recursive preprocessor calls:
        writeFile orgfile srcprog
        outtxt <- catch (callPreprocessors opts (optionLines srcprog)
@@ -280,7 +281,7 @@ replaceOptionsLine = unlines . map replOptLine . lines
 
 -- Is this a OPTIONS_CYMAKE comment line?
 isOptionLine :: String -> Bool
-isOptionLine s = "{-# OPTIONS_CYMAKE " `isPrefixOf` s -- -}
+isOptionLine s = "{-# OPTIONS_CYMAKE " `isPrefixOf` dropWhile isSpace s -- -}
 
 -- Extract all OPTIONS_CYMAKE lines:
 optionLines :: String -> String
