@@ -1,5 +1,9 @@
-{- ERD specification read from uni.xmi -}
+-- ERD specification for university lectures.
 
+import Database.ERD
+
+uniERD :: ERD
+uniERD =
  ERD "Uni"
    [Entity "Student"
            [Attribute "Name" (StringDom Nothing) NoKey False,
