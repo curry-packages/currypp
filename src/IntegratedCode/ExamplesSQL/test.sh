@@ -19,8 +19,10 @@ ERD2CURRY=$HOME/.cpm/bin/erd2curry
 if [ ! -x "$ERD2CURRY" ] ; then
   ERD2CURRY=$CURRYBIN/$CURRYEXEC-erd2curry
   if [ ! -x "$ERD2CURRY" ] ; then
-    echo "No executable 'erd2curry' found!"
-    exit 1
+    echo "SQL integration not tested: no executable 'erd2curry' found!"
+    echo "To run the SQL integration test, install 'erd2curry' by:"
+    echo "> cpm installbin ertools"
+    exit
   fi
 fi
 
