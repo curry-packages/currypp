@@ -292,7 +292,7 @@ methods to the database.
 In the following, we sketch the use of SQL statements
 as integrated code.
 A detailed description of the ideas behind this technique
-can be found in \cite{HanusKrone16WFLP}.
+can be found in \cite{HanusKrone17EPTCS}.
 Currently, only SQLite databases are supported.
 
 
@@ -317,7 +317,7 @@ Figure~\ref{fig:erd} shows an ERD which we use in the following examples.
 \begin{center}
   \includegraphics[trim= 0 320 120 0,scale=0.7, clip=true]{\curryhome/currytools/currypp/Docs/diagram.pdf}
 \end{center}
-\caption{A simple entity-relationship diagram for university lectures \cite{HanusKrone16WFLP}}
+\caption{A simple entity-relationship diagram for university lectures \cite{HanusKrone17EPTCS}}
 \label{fig:erd}
 \end{figure*}
 
@@ -452,18 +452,22 @@ Figure~\ref{fig:erdterm} on (page~\pageref{fig:erdterm})
 shows the complete ER data term specification
 corresponding to the ERD of Fig.~\ref{fig:erd}.
 
-If such a data term specification is stored in file
-\code{UniERD.term}, then one can use the tool \ccode{erd2cdbi},
-which is stored in the directory \code{\cyshome/bin},
+Such a data term specification should be stored in Curry program file
+as an (exported!) top-level operation type \code{ERD}.
+If our example term is defined as a constant in the Curry program
+\code{UniERD.curry}, then one has to use the tool \ccode{erd2curry}
+(see Sect.~\ref{sec-erd2curry})
 to process the ER model so that it can be used
-in SQL statements. This tool is invoked with the name of the term file
-and the (preferably absolute) file name of the SQLite database.
-If the later does not exist, it will be initialized by the tool.
+in SQL statements. This tool is invoked with the parameter
+\ccode{--cdbi},
+the (preferably absolute) file name of the SQLite database,
+and the name of the Curry program containing the ER specification.
+If the SQLite database file does not exist, it will be initialized by the tool.
 In our example, we execute the following command
 (provided that the directory \code{\cyshome/bin} is in the path):
 %
 \begin{curry}
-> erd2cdbi Uni_ERD.term `pwd`/Uni.db
+> curry erd2curry --db `pwd`/Uni.db --cdbi UniERD.curry
 \end{curry}
 %
 This initializes the SQLite database \code{Uni.db}
@@ -476,8 +480,6 @@ i.e., the relations of the ER model are either represented
 by adding foreign keys to entities (in case of (0/1:1) or (0/1:n) relations)
 or by new entities with the corresponding relations
 (in case of complex (n:m) relations).
-This task is performed by the tool \code{erd2curry}
-(see Sect.~\ref{sec-erd2curry}).
 \item
 A new Curry module \code{Uni\us{}CDBI} is generated.
 It contains the definitions of
@@ -605,7 +607,7 @@ a condition on the relation \code{has\us{}a} specified in the ER model
 The complete SQL syntax supported by the Curry preprocessor
 is shown in Appendix~\ref{app:sqlsyntax}.
 More details about the implementation of this
-SQL translator can be found in \cite{HanusKrone16WFLP,Krone15}.
+SQL translator can be found in \cite{HanusKrone17EPTCS,Krone15}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
