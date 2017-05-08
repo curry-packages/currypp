@@ -30,14 +30,14 @@ test_a_z_plus_2 = ("Abc" ``regex [a-z]+'')                -=- False
 
 -- Examples with parameterized regular expressions:
 
-pregexp1 :: [a] -> a -> a -> Bool
+pregexp1 :: Ord a => [a] -> a -> a -> Bool
 pregexp1 s v1 v2 = s ``regex [<v1>-<v2>]*''
 
 test_para_a_c_1 = pregexp1 "abccba" 'a' 'c'               -=- True
 
 test_para_a_c_2 = pregexp1 "abcdcba" 'a' 'c'              -=- False
 
-pregexp2 :: [a] -> a -> a -> Bool
+pregexp2 :: Ord a => [a] -> a -> a -> Bool
 pregexp2 s v1 v2 = s ``regex (<v1>|<v2>)*''
 
 test_para_0_1_star_1 = pregexp2 [0,1,1,0,0] 0 1           -=- True
