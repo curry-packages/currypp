@@ -46,6 +46,10 @@
                        "FibInfinite", "Quicksort" ]
         }
     ],
+    "documentation": {
+        "src-dir": "docs",
+        "main": "main.tex"
+    },
     "source": {
         "git": "https://git.ps.informatik.uni-kiel.de/curry-packages/currypp.git",
         "tag": "$version"
