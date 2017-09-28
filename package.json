@@ -5,10 +5,11 @@
     "synopsis": "The standard preprocessor of Curry",
     "category": [ "Analysis" ],
     "dependencies": {
-        "cass-analysis": ">= 0.0.4",
-        "cass"         : ">= 0.0.1",
-        "currycheck"   : ">= 1.0.0",
-        "verify"       : ">= 0.0.1"
+        "abstract-curry": ">= 1.0.0",
+        "cass-analysis" : ">= 0.0.4",
+        "cass"          : ">= 0.0.1",
+        "currycheck"    : ">= 1.0.0",
+        "verify"        : ">= 0.0.1"
     },
     "compilerCompatibility": {
         "pakcs": ">= 1.14.0, < 2.0.0",
