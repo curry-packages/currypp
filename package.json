@@ -9,7 +9,8 @@
         "cass-analysis" : ">= 0.0.4",
         "cass"          : ">= 0.0.1",
         "currycheck"    : ">= 1.0.0",
-        "html"          : ">= 1.1.0"
+        "html"          : ">= 1.1.0",
+        "xml"           : ">= 0.0.1"
     },
     "compilerCompatibility": {
         "pakcs": ">= 1.14.0, < 2.0.0",
