@@ -10,7 +10,9 @@
         "cass"          : ">= 2.0.0",
         "cdbi"          : ">= 2.0.0",
         "currycheck"    : ">= 2.0.0",
+        "fl-parser"     : ">= 1.0.0",
         "html"          : ">= 2.0.0",
+        "regexp"        : ">= 1.1.0",
         "xml"           : ">= 2.0.0"
     },
     "compilerCompatibility": {
