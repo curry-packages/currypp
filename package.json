@@ -13,6 +13,7 @@
         "fl-parser"     : ">= 1.0.0",
         "html"          : ">= 2.0.0",
         "regexp"        : ">= 1.1.0",
+        "wl-pprint"     : ">= 0.0.1",
         "xml"           : ">= 2.0.0"
     },
     "compilerCompatibility": {

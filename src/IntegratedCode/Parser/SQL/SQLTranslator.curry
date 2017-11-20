@@ -12,9 +12,9 @@ module SQLTranslator(translate) where
 import AbstractCurry.Types
 import AbstractCurry.Pretty
 import AbstractCurry.Build
-import Char(toLower, toUpper)
-import List(intercalate, splitOn)
-import Pretty
+import Char        ( toLower, toUpper )
+import List        ( intercalate, splitOn )
+import Text.Pretty ( pPrint )
 
 import ParseTypes
 
