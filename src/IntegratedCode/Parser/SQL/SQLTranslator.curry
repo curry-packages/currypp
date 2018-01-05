@@ -72,15 +72,15 @@ transStatement p mModel (Update tab assigns cond) =
              (transUpdate p mModel assigns cond) 
 transStatement _ mModel (UpdateEntity tab val) =
   liftPM (\table -> applyF (mCDBI, "updateEntry") 
-                           [(transValue mModel val False), table])
+                           [table, transValue mModel val False])
          (transTableName mModel tab)
 transStatement p mModel (Delete tab cond) = transDelete p mModel tab cond       
 transStatement _ mModel (Insert tab cols valss) =      
   combinePMs (\func args -> applyF func args) 
-             (getInsertfunction valss)
+             (getInsertFunction valss)
              (combinePMs (\d t -> [d,t])
-                         (transInsertData mModel tab cols valss) 
-                         (transTableName mModel tab))
+                         (transTableName mModel tab)
+                         (transInsertData mModel tab cols valss) )
 transStatement p mModel (InTransaction sts) = transTransaction p mModel sts   
 transStatement _ _ Transaction = 
         cleanPM (CLambda [cpvar "c"] 
@@ -642,8 +642,8 @@ transMaybeCond p mModel cond =
 
 -- Depending on the number of given lists of values
 -- there are different CDBI functions to apply.
-getInsertfunction :: [[Value]] -> PM (String, String)
-getInsertfunction valss =
+getInsertFunction :: [[Value]] -> PM (String, String)
+getInsertFunction valss =
   if length valss > 1
     then cleanPM (mCDBI, "insertEntries") 
     else cleanPM (mCDBI, "insertEntry")

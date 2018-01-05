@@ -5,7 +5,7 @@
 
 import Database.CDBI.ER 
 import Time
-import Uni_CDBI
+import Uni
 
 -- Selecting key Values
 testKey1 :: IO( SQLResult [(StudentID,String)])

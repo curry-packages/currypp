@@ -3,7 +3,6 @@
 
 # Root location of the Curry System specified by variable CURRYROOT
 CURRYROOT=`$CURRYBIN :set v0 :set -time :add Distribution :eval "putStrLn installDir" :quit`
-
 CURRYBINDIR=$CURRYROOT/bin
 
 if [ -x "$CURRYBINDIR/pakcs" ] ; then
@@ -40,7 +39,7 @@ export PATH
 cleandir () {
   $CURRYBINDIR/cleancurry
   /bin/rm -f $LOGFILE *_PUBLIC.curry TEST*.curry
-  /bin/rm -f Uni.erdterm Uni_ERDT.term Uni_SQLCode.info Uni_CDBI.curry Uni.db
+  /bin/rm -f Uni.erdterm Uni_ERDT.term Uni_SQLCode.info Uni.curry Uni.db
   $CURRYBINDIR/cleancurry
 }
 

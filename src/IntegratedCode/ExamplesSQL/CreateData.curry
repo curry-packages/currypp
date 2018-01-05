@@ -1,4 +1,4 @@
-import Uni_CDBI
+import Uni
 import Database.CDBI.ER 
 import Database.CDBI.Connection
 import Time
@@ -6,15 +6,15 @@ import Time
 createTestData :: IO ()
 createTestData = do 
   conn   <- connectSQLite sqliteDBFile
-  result <- ((insertEntries studentList student_CDBI_Description) >+
-             (insertEntries lectureList lecture_CDBI_Description) >+
-             (insertEntries lecturerList lecturer_CDBI_Description) >+
-             (insertEntries placeList place_CDBI_Description) >+
-             (insertEntries timeList time_CDBI_Description) >+
-             (insertEntries examList exam_CDBI_Description) >+
-             (insertEntries resultList result_CDBI_Description) >+
-             (insertEntries participList participation_CDBI_Description) >+
-             (insertEntryCombined sse1 sseDescription)
+  result <- (insertEntries student_CDBI_Description       studentList  >+
+             insertEntries lecture_CDBI_Description       lectureList  >+
+             insertEntries lecturer_CDBI_Description      lecturerList >+
+             insertEntries place_CDBI_Description         placeList    >+
+             insertEntries time_CDBI_Description          timeList     >+
+             insertEntries exam_CDBI_Description          examList     >+
+             insertEntries result_CDBI_Description        resultList   >+
+             insertEntries participation_CDBI_Description participList >+
+             insertEntryCombined sseDescription sse1
             ) conn
   disconnect conn
   case result of

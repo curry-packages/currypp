@@ -4,7 +4,7 @@
 --- Testing also insert/update/delete operations
 
 import Database.CDBI.ER
-import Uni_CDBI
+import Uni
 
 -- control functions
 showStudents :: IO (SQLResult [Student])

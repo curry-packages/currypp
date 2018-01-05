@@ -5,7 +5,7 @@
 
 import Database.CDBI.ER as C
 import Time
-import Uni_CDBI
+import Uni
 
 -- "Scanner" errors
 -- unsupported character '&'

@@ -5,7 +5,7 @@
 import Database.CDBI.Connection 
 import Database.CDBI.ER 
 import Time
-import Uni_CDBI
+import Uni
 import Test.Prop
 
 

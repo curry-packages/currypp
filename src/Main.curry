@@ -28,7 +28,7 @@ import TransContracts (transContracts)
 cppBanner :: String
 cppBanner = unlines [bannerLine,bannerText,bannerLine]
  where
-   bannerText = "Curry Preprocessor (version of 24/07/2017)"
+   bannerText = "Curry Preprocessor (version of 05/01/2018)"
    bannerLine = take (length bannerText) (repeat '=')
 
 --- Preprocessor targets, i.e., kind of entities to be preprocessed:
