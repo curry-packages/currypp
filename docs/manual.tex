@@ -566,6 +566,21 @@ allStudents :: IO [Student]
 allStudents = liftIO fromSQLResult ``sql Select * From Student;''
 \end{curry}
 %
+In order to get more control on executing the SQL statement,
+one can add a star character after the language tag.
+In this case, the SQL statement is translated into a database action,
+i.e., into the type \code{DBAction} defined in the \CYS library
+\code{Database.CDBI.Connection}:
+%
+\begin{curry}
+allStudentsAction :: DBAction [Student]
+allStudentsAction = ``sql* Select * From Student;''
+\end{curry}
+%
+Then one can put \code{allStudentsAction} inside a database transaction
+or combine it with other database actions (see \code{Database.CDBI.Connection}
+for operations for this purpose).
+
 In order to select students with an age between 20 and 25,
 one can put a condition as usual:
 %

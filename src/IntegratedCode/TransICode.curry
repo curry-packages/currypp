@@ -26,7 +26,7 @@
 --- sql    - see the SQLConverter and CDBI-library
 ---
 --- @author Jasper Sikorra (with changes by Michael Hanus)
---- @version June 2016
+--- @version January 2018
 ------------------------------------------------------------------------------
 module TransICode where
 
@@ -61,7 +61,10 @@ parsers = maybe iden pars
       case l of
         "sql"       -> case model of
                          Left err -> const (return $ throwPM p err)
-                         _        -> SQLParser.parse model p
+                         _        -> SQLParser.parse True model p
+        "sql*"      -> case model of
+                         Left err -> const (return $ throwPM p err)
+                         _        -> SQLParser.parse False model p
         "dummy"     -> DummyParser.parse p
         "format"    -> FormatParser.parse ""       p
         "printf"    -> FormatParser.parse "putStr" p

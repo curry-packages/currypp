@@ -31,15 +31,16 @@ import SQLTyper
 
 --- Converts a string representing SQL-requests into functions defined
 --- in the CDBI interface by calling the different stage of transformation.
----@parserInfo - either the parser information or an error message
----@param pos - Position of the integrated SQL-String in the orginal file
----@param code - the SQL-request as string
----@return A String in Curry-Syntax (CDBI-functions).
-parse :: Either String ParserInfo -> LangParser
-parse parserInfo pos code = 
+--- @param withrundb - decorate target code with `runWithDB`
+--- @param parserInfo - either the parser information or an error message
+--- @param pos - Position of the integrated SQL-String in the orginal file
+--- @param code - the SQL-request as string
+--- @return A String in Curry-Syntax (CDBI-functions).
+parse :: Bool -> Either String ParserInfo -> LangParser
+parse withrundb parserInfo pos code = 
    case parserInfo of
          Left err -> return (throwPM pos err)
-         Right pi -> processCompilation pi pos code 
+         Right pi -> processCompilation withrundb pi pos code 
   
 --- Reader for parser information file.
 --- @param verb - verbosity level
@@ -63,8 +64,8 @@ checkResult pm@(WM (OK _ ) _)    = Right pm
 -- Calls the stages of parsing process in the right order
 -- and passes corresponding parts of the parser information.
 -- Aborts process in case a stage returns with an error.
-processCompilation :: ParserInfo -> LangParser
-processCompilation parserInfo pos code =
+processCompilation :: Bool -> ParserInfo -> LangParser
+processCompilation withrundb parserInfo pos code =
   let parsedCode = parseTkLs pos (scan code)
   in case checkResult parsedCode of
       Left pm -> return pm
@@ -88,7 +89,7 @@ processCompilation parserInfo pos code =
            in case checkResult typeCheckedCode of
                      Left pm -> return pm
                      Right _ -> return (translate typeCheckedCode 
-                                                  (dbName parserInfo)
+                                                  withrundb
                                                   (cdbiModule parserInfo)
                                                   pos)
 

@@ -26,15 +26,16 @@ testS1 = queryS1 `returns` Right
 
 testS2 :: IO() -- SQLResult [(Student,Uni_CDBI.Result)])
 testS2 = do 
-           result <- ``sql Select * From Student as s Inner Join Result as r On Satisfies s has_a r;'' 
+           result <- ``sql Select * From Student as s Inner Join Result as r
+                           On Satisfies s has_a r;'' 
            printResult result
 
-queryS3 :: IO (SQLResult [String])
-queryS3 = ``sql Select Distinct s.Name From Student as s;''
+queryS3 :: IO [String]
+queryS3 = liftIO fromSQLResult
+            ``sql Select Distinct s.Name From Student as s;''
 
 testS3 :: PropIO
-testS3 = queryS3 `returns`
-           Right ["Muster","Arndt","Ziege","Sonne","Mond","Stern"]
+testS3 = queryS3 `returns` ["Muster","Arndt","Ziege","Sonne","Mond","Stern"]
 
 testS4 :: IO() -- SQLResult [String])
 testS4 = do 

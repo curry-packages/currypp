@@ -1,10 +1,11 @@
+-- ---------------------------------------------------------
 --- This module translates the abstract syntax tree
 --- into a curry programm using the AbstractCurry libraries.
 --- Errors are thrown for limitations caused by CDBI.
 --- The translation is provided as a single line string as
 --- required by currypp.
+---
 --- @author: Julia Krone
---- @version: 0.1
 -- ---------------------------------------------------------
 
 module SQLTranslator(translate) where
@@ -26,30 +27,32 @@ mCDBI = "Database.CDBI.ER"
 
 --- Invokes the translation of the AST into a string of curry code 
 --- in case a valid AST is given, does nothing otherwise.
-translate :: PM[Statement] -> String -> String -> Pos -> PM String
+translate :: PM [Statement] -> Bool -> String -> Pos -> PM String
 translate (WM (Errors err) ws) _ _ _ = WM (throwPR err) ws
-translate (WM (OK stats) ws) dbPath mModel pos = 
+translate (WM (OK stats) ws) withrundb mModel pos = 
   let (WM resPR warns) = sequencePM (map (transStatement pos mModel) stats )
-   in liftPM (writeFunction dbPath) (WM resPR (warns++ws))
-
--- The list of CExpr representing the statements is concatenated and pretty 
--- printed to obtain a single-line-translation line feeds are replaced by 
--- space characters and indentation is removed
-writeFunction :: String -> [CExpr] -> String
-writeFunction db stats = 
-  let finExpr = (applyF (mCDBI, "runWithDB")
-                        [(string2ac db), (concatStatements stats)]) 
-      finStr = (pPrint (ppCExpr defaultOptions finExpr))  
-      newLines = splitOn ['\n'] finStr
-  in '(' : removeIndents (intercalate [' '] newLines) ++ ")"
+   in liftPM showFunction (WM resPR (warns++ws))
+ where
+  -- The list of CExpr representing the statements is concatenated and pretty 
+  -- printed. To obtain a single-line translation, line feeds are replaced by 
+  -- space characters and indentation is removed
+  showFunction stats = 
+    let finExpr = if withrundb
+                    then applyF (mCDBI, "runWithDB")
+                                [constF (mModel, "sqliteDBFile"),
+                                 concatStatements stats]
+                    else concatStatements stats
+        finStr = (pPrint (ppCExpr defaultOptions finExpr))  
+        newLines = splitOn ['\n'] finStr
+    in '(' : removeIndents (intercalate [' '] newLines) ++ ")"
 
 removeIndents :: String -> String
 removeIndents [] = []
 removeIndents (s:str) = 
   case s of
-     ' ' -> let (spaces, rest) = span (\c -> c == ' ') str 
-             in s:(removeIndents rest)
-     _   -> s:(removeIndents str)
+     ' ' -> let (_, rest) = span (\c -> c == ' ') str 
+             in s : removeIndents rest
+     _   -> s : removeIndents str
 
 concatStatements :: [CExpr] -> CExpr
 concatStatements [] = CLambda [cpvar "conn"] 
