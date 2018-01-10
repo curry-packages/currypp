@@ -292,7 +292,7 @@ getInnerJoin p mModel (JC cond) =
            (transCond p mModel cond)
 
 -- Returns correct function name according to number of columns.
--- Returns an error for more than five columns or compound selects
+-- Returns an error for more than six columns or compound selects
 -- for complete entity cause neither is supported by CDBI.
 getColFunc :: Pos -> SelectHead -> PM (String, String)
 getColFunc p (Query (SelColumns _ elems) _ _ _) =
@@ -302,8 +302,9 @@ getColFunc p (Query (SelColumns _ elems) _ _ _) =
          3 -> cleanPM (mCDBI, "getColumnTriple")
          4 -> cleanPM (mCDBI, "getColumnFourTuple")
          5 -> cleanPM (mCDBI, "getColumnFiveTuple")
-         _ -> throwPM p ("The Selection of more than five Columns are not"
-                          ++" supported by the CDBI-Interface.")
+         6 -> cleanPM (mCDBI, "getColumnSixTuple")
+         _ -> throwPM p ("The selection of more than six columns is not " ++
+                         "supported by the CDBI-Interface.")
 getColFunc p (Query (SelAll _) _ _ _) =
   throwPM p ("The Combination of '*' and Setoperators is not supported.")
 getColFunc p (Set _ _ _) =
@@ -311,7 +312,7 @@ getColFunc p (Set _ _ _) =
 
 -- Returns construction of datatypes for selection of single columns
 -- according to number of columns.
--- Returns an error for more than five columns or compound selects
+-- Returns an error for more than six columns or compound selects
 -- for complete entity cause neither is supported by CDBI.
 transToGetCol ::  Pos -> String -> SelectHead -> PM CExpr
 transToGetCol p mModel q@(Query (SelColumns _ es) _ _ _) =
@@ -321,13 +322,14 @@ transToGetCol p mModel q@(Query (SelColumns _ es) _ _ _) =
      3 -> transToTripleCol p mModel q 
      4 -> transToFourTCol p mModel q 
      5 -> transToFiveTCol p mModel q 
-     _ ->  throwPM p ("The Selection of more than five Columns are not"
-                          ++" supported by the CDBI-Interface.")
+     6 -> transToSixTCol p mModel q 
+     _ ->  throwPM p ("The selection of more than six columns is not " ++
+                      "supported by the CDBI-Interface.")
 transToGetCol p _ (Query (SelAll _) _ _ _) = 
-    throwPM p ("The Combination of '*' and Setoperators is not supported.")
-transToGetCol p _ (Set _ _ _ ) = throwPM p ("The Combination of '*' "++
-                                               "and Setoperators is "++
-                                               "not supported.") 
+    throwPM p ("The combination of '*' and set operators is not supported.")
+transToGetCol p _ (Set _ _ _ ) = throwPM p ("The combination of '*' "++
+                                            "and set operators is "++
+                                            "not supported.") 
 
 -- Translation to SingleColumnSelect.
 transToSingleCol :: Pos -> String -> SelectHead -> PM CExpr
@@ -380,6 +382,17 @@ transToFiveTCol p mModel (Query (SelColumns sp es) tab cond gr) =
                   applyE (CSymbol (mCDBI, "FiveCS"))
                          ([(transSp sp), tupleCol, trTab]++trCond))
              (transColumnCol p mModel "fiveCol" es)
+             (combinePMs (,)
+                         (transTabsNJoins p mModel tab)  
+                         (transSelCond p mModel cond gr)) 
+
+-- Translation to SixColumnSelect.
+transToSixTCol :: Pos -> String -> SelectHead -> PM CExpr
+transToSixTCol p mModel (Query (SelColumns sp es) tab cond gr) = 
+  combinePMs (\tupleCol (trTab, trCond) -> 
+                  applyE (CSymbol (mCDBI, "SixCS"))
+                         ([(transSp sp), tupleCol, trTab]++trCond))
+             (transColumnCol p mModel "sixCol" es)
              (combinePMs (,)
                          (transTabsNJoins p mModel tab)  
                          (transSelCond p mModel cond gr)) 
