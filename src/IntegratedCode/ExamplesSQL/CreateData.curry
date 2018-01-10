@@ -4,22 +4,16 @@ import Database.CDBI.Connection
 import Time
 
 createTestData :: IO ()
-createTestData = do 
-  conn   <- connectSQLite sqliteDBFile
-  result <- (insertEntries student_CDBI_Description       studentList  >+
-             insertEntries lecture_CDBI_Description       lectureList  >+
-             insertEntries lecturer_CDBI_Description      lecturerList >+
-             insertEntries place_CDBI_Description         placeList    >+
-             insertEntries time_CDBI_Description          timeList     >+
-             insertEntries exam_CDBI_Description          examList     >+
-             insertEntries result_CDBI_Description        resultList   >+
-             insertEntries participation_CDBI_Description participList >+
-             insertEntryCombined sseDescription sse1
-            ) conn
-  disconnect conn
-  case result of
-    Left (DBError kind str) -> putStrLn ((show kind) ++ " " ++ str)
-    Right _ -> putStrLn "Ok"
+createTestData = runJustT $ do
+  insertEntries student_CDBI_Description       studentList 
+  insertEntries lecture_CDBI_Description       lectureList 
+  insertEntries lecturer_CDBI_Description      lecturerList
+  insertEntries place_CDBI_Description         placeList   
+  insertEntries time_CDBI_Description          timeList    
+  insertEntries exam_CDBI_Description          examList    
+  insertEntries result_CDBI_Description        resultList  
+  insertEntries participation_CDBI_Description participList
+  insertEntryCombined sseDescription sse1
 
 -- Students
 studentList = [student1, student2, student3, student4]
