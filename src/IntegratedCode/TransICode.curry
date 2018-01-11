@@ -28,11 +28,12 @@
 --- @author Jasper Sikorra (with changes by Michael Hanus)
 --- @version January 2018
 ------------------------------------------------------------------------------
+
 module TransICode where
 
-import Directory(getDirectoryContents)
-import FilePath ((</>), takeDirectory)
-import IO(stderr,hPutStrLn)
+import Directory ( getAbsolutePath, getDirectoryContents )
+import FilePath  ( (</>), joinPath, splitDirectories, takeDirectory )
+import IO        ( stderr, hPutStrLn )
 import List
 import System
 
@@ -61,10 +62,10 @@ parsers = maybe iden pars
       case l of
         "sql"       -> case model of
                          Left err -> const (return $ throwPM p err)
-                         _        -> SQLParser.parse True model p
+                         _        -> SQLParser.parseSQL True model p
         "sql*"      -> case model of
                          Left err -> const (return $ throwPM p err)
-                         _        -> SQLParser.parse False model p
+                         _        -> SQLParser.parseSQL False model p
         "dummy"     -> DummyParser.parse p
         "format"    -> FormatParser.parse ""       p
         "printf"    -> FormatParser.parse "putStr" p
@@ -127,14 +128,26 @@ tryReadParserInfoFile :: Int -> String -> String
                       -> IO (Either String ParserInfo)
 tryReadParserInfoFile verb model orgfname = do
   if null model
-   then do dirfiles <- getDirectoryContents orgdir
-           case filter ("_SQLCode.info" `isSuffixOf`) dirfiles of
-             []  -> return (Left "No .info file provided or found!")
-             [m] -> readParserInfo verb (orgdir </> m)
-             _   -> return (Left "Multiple .info files found!")
+   then do orgdir  <- getAbsolutePath (takeDirectory orgfname)
+           fresult <- findParserInfoFile (splitDirectories orgdir)
+           case fresult of
+             Left err    -> return (Left err)
+             Right fname -> readParserInfo verb (orgdir </> fname)
    else readParserInfo verb model
- where
-   orgdir = takeDirectory orgfname
+
+findParserInfoFile :: [String] -> IO (Either String String)
+findParserInfoFile dirpath = do
+  let dir = joinPath dirpath
+  --putStrLn $ "Searching info file in: " ++ dir
+  dirfiles <- getDirectoryContents dir
+  case filter ("_SQLCode.info" `isSuffixOf`) dirfiles of
+    []  -> let uppath = init dirpath
+           in if null uppath
+                then return (Left "No .info file provided or found!")
+                else findParserInfoFile uppath
+    [m] -> return (Right $ dir </> m)
+    ms  -> return (Left $ "Multiple .info files found in directory '" ++ dir ++
+                          "':\n" ++ unwords ms)
 
 --- Handles the IO and PM monads around the StandardTokens for the
 --- concatenation, so they will not disturb in the real concat function

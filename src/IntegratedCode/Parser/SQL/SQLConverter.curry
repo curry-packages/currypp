@@ -8,11 +8,11 @@
 --- Reads the .info file which contains information about the data model and
 --- passes the information to the corresponding subroutines.
 --- Aborts compilation process in case a stage returns with an error.
----@author Julia Krone
----@version 0.1
+---
+--- @author Julia Krone
 -- ---------------------------------------------------------------------------
 
-module SQLConverter(parse, readParserInfo, ParserInfo) where
+module SQLConverter(parseSQL, readParserInfo, ParserInfo) where
 
 
 import IO(openFile, IOMode(..), hGetContents)
@@ -36,8 +36,8 @@ import SQLTyper
 --- @param pos - Position of the integrated SQL-String in the orginal file
 --- @param code - the SQL-request as string
 --- @return A String in Curry-Syntax (CDBI-functions).
-parse :: Bool -> Either String ParserInfo -> LangParser
-parse withrundb parserInfo pos code = 
+parseSQL :: Bool -> Either String ParserInfo -> LangParser
+parseSQL withrundb parserInfo pos code = 
    case parserInfo of
          Left err -> return (throwPM pos err)
          Right pi -> processCompilation withrundb pi pos code 
@@ -48,13 +48,13 @@ parse withrundb parserInfo pos code =
 --- @return either an error message or the parser information 
 readParserInfo :: Int -> String -> IO (Either String ParserInfo)
 readParserInfo verb filename = do
-  when (verb > 0) $ putStrLn $ "Read SQL model info file '" ++filename++ "'..."
+  when (verb > 0) $ putStrLn $
+    "Reading SQL model info file '" ++ filename ++ "'..."
   handle <- openFile filename ReadMode
   contents <- (hGetContents handle)
-  case (readsQTerm contents) of
-           []        -> return (Left ("ParserInfo-file was not found"++
-                                       " or is corrupted."))
-           ((a,_):_) -> return (Right a)
+  case readsQTerm contents of
+    []        -> return (Left "ParserInfo file not found or corrupted.")
+    ((a,_):_) -> return (Right a)
  
 -- auxiliary function to check Result after each stage 
 checkResult :: PM a -> Either (PM String) (PM a)
