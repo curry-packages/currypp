@@ -49,7 +49,7 @@ exectests() {
   # compile model:
   "$ERD2CURRY" --db `pwd`/Uni.db --cdbi UniERD.curry
   # fill database:
-  $CURRYBINDIR/curry $REPL_OPTS :l CreateData :eval createTestData :q
+  $CURRYBINDIR/curry $REPL_OPTS :l CreateData :eval main :q
   # run query tests:
   $CURRYBINDIR/curry check SelectExamples
 }
