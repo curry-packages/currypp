@@ -8,7 +8,7 @@
         "abstract-curry": ">= 1.0.0",
         "cass-analysis" : ">= 0.0.4",
         "cass"          : ">= 0.0.1",
-        "cdbi"          : ">= 1.0.0",
+        "cdbi"          : ">= 1.1.0",
         "currycheck"    : ">= 1.0.0",
         "html"          : ">= 1.1.0",
         "xml"           : ">= 0.0.1"
