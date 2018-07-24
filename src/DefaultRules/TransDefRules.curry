@@ -11,14 +11,14 @@ import AbstractCurry.Files
 import AbstractCurry.Select
 import AbstractCurry.Build
 import AbstractCurry.Pretty
-import Char(isDigit,digitToInt)
-import DefaultRuleUsage
-import Directory
+import Data.Char (isDigit,digitToInt)
+import Data.List(isPrefixOf,isSuffixOf,partition)
+import System.Directory
+import System.FilePath (takeDirectory)
+import System.Process
 import Distribution
-import FilePath (takeDirectory)
-import List(isPrefixOf,isSuffixOf,partition)
-import System
 import TheoremUsage
+import DefaultRuleUsage
 
 --------------------------------------------------------------------
 
@@ -320,7 +320,7 @@ transDefaultRule condfunname ar (CRule pats (CSimpleRhs exp locals)) =
                              (CSymbol condfunname : args)]
 
   (newpats,args) = unzip (map arg2patexp (zip [1001..] pats))
-  
+
   arg2patexp (i,pat) = case pat of
     CPVar v     -> if snd v=="_"
                      then let newvar = (i,"patvar_"++show i)
@@ -329,7 +329,7 @@ transDefaultRule condfunname ar (CRule pats (CSimpleRhs exp locals)) =
     CPAs asv _  -> (pat, CVar asv)
     _           -> let newvar = (i,"patvar_"++show i)
                     in (CPAs newvar pat, CVar newvar)
-  
+
 ------------------------------------------------------------------------
 
 preUnit :: CExpr

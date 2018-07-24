@@ -39,7 +39,7 @@ testEx3 = (ex3 'a') -=- "This is a char: a"
 -- Integer and character formatting:
 testIntFixedSignedChar =  ``format "%+5d%c",42,c''  -=-  "  +42%"
   where
-   c = '%'                           
+   c = '%'
 
 -- Format a string with a given width and maximal length:
 ex4 :: String -> String
@@ -57,7 +57,7 @@ test_intexp = (ex8 42 2143) -=- "The sum of +00042 and +2143 is  +2185.\n"
 testFloatFixPrec3 = ``format "%+8.3f",f'' -=- "  +3.142"
  where
   f = 3.14159
-  
+
 -- Format a float with an exponent:
 testFloatExp = ``format "% .4E",f'' -=- " 3.1416E+02"
  where

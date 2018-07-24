@@ -31,11 +31,11 @@
 
 module TransICode where
 
-import Directory ( getAbsolutePath, getDirectoryContents )
-import FilePath  ( (</>), joinPath, splitDirectories, takeDirectory )
-import IO        ( stderr, hPutStrLn )
-import List
-import System
+import System.Directory ( getAbsolutePath, getDirectoryContents )
+import System.FilePath  ( (</>), joinPath, splitDirectories, takeDirectory )
+import System.IO        ( stderr, hPutStrLn )
+import System.Process
+import Data.List
 
 import ParseTypes
 

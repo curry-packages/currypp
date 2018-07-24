@@ -3,14 +3,14 @@
 --- test module for integration of SQL
 --- using currypp
 
-import Database.CDBI.ER 
-import Time
+import Database.CDBI.ER
+import Data.Time
 import Uni
 
 -- Selecting key Values
 testKey1 :: IO( SQLResult [(StudentID,String)])
 testKey1 = ``sql Select s.Key, s.Name from Student as s where s.Key = 1;''
-      
+
 testKey2 :: IO( SQLResult [(StudentID,String)])
 testKey2 = ``sql Select s.Key, s.Name from Student as s where s.Key in (1,4,7);''
 
@@ -32,16 +32,16 @@ testFK = ``sql Update Result Set StudentTakingKey = 11 Where Key = 9;''
 -- Testing case expressions
 testCase1 :: IO( SQLResult [(String, String)])
 testCase1 = ``sql Select s.Name,
-                   Case When s.Age < 20 Then "Young" Else "Old" End 
+                   Case When s.Age < 20 Then "Young" Else "Old" End
                    From Student as s;''
 
 testCase2 :: IO( SQLResult [(String, String)])
 testCase2 = ``sql Select s.Name,
-                   Case When s.Key < 4 Then "First" Else "Second" End 
+                   Case When s.Key < 4 Then "First" Else "Second" End
                    From Student as s;''
 
--- queries with date-type  
---attention - wrong format -> warning                 
+-- queries with date-type
+--attention - wrong format -> warning
 testDate :: IO(SQLResult ())
 testDate = ``sql Insert into Time Values (Null, 24:09:2015:17:25:00);''
 
@@ -61,13 +61,13 @@ checkDates = ``sql Select * from Time;''
 -- complex having conditions
 
 checkHaving :: IO(SQLResult [(Float, Float)])
-checkHaving = ``sql Select Avg(r.Grade), Avg(r.Points) 
-                    From Result as r Inner Join Student as s On Satisfies r belongs_to s 
+checkHaving = ``sql Select Avg(r.Grade), Avg(r.Points)
+                    From Result as r Inner Join Student as s On Satisfies r belongs_to s
                     Group By s.Name having not Avg(r.Grade) < 3.0 And Avg(r.Points) > 80.0;''
-                
+
 checkHaving1 ::IO(SQLResult [(Float, Float)])
-checkHaving1 = ``sql Select Avg(r.Grade), Avg(r.Points) 
-                     From Result as r Inner Join Student as s On Satisfies r belongs_to s 
+checkHaving1 = ``sql Select Avg(r.Grade), Avg(r.Points)
+                     From Result as r Inner Join Student as s On Satisfies r belongs_to s
                      Group By s.Name having (not (Avg(r.Grade) < 3.0 And Avg(r.Points) > 80.0));''
 
 -- testing warnings for notation difference
@@ -98,11 +98,11 @@ testAlias3 = ``sql Select Name, Points from Student, Result;''
 
 -- test insert and update with single embedded expressions
 testI2 :: Int -> IO (SQLResult ())
-testI2 age = ``sql Insert Into Student Values 
+testI2 age = ``sql Insert Into Student Values
                     ( "Julia", "Kunst", 5959, "juk@mail.de", {age});''
-                    
+
 testI3 :: IO (SQLResult ())
 testI3 = ``sql Insert into Result (Attempt, StudentTakingKey, ExamResultingKey) Values (1,10,3);''
-                    
+
 testU4 :: Int -> IO (SQLResult ())
-testU4 x = ``sql Update Student Set Age = {x} Where Age < {x};'' 
+testU4 x = ``sql Update Student Set Age = {x} Where Age < {x};''

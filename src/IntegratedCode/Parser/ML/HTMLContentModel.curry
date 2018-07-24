@@ -8,7 +8,7 @@ module HTMLContentModel where
 
 import MLTypes
 
-import Char
+import Data.Char
 
 isHtmlElement :: Symbol -> Bool
 isHtmlElement sym = isTag sym && elem (map toLower (tgn sym)) htmlElements

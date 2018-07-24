@@ -14,8 +14,8 @@ import HTMLContentModel
 import MLTypes
 import MLWarning
 
-import Char
-import List
+import Data.Char
+import Data.List
 
 -- characters
 HT = chr 009 -- '\t'

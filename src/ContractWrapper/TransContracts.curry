@@ -22,19 +22,20 @@ import AbstractCurry.Pretty
 import AbstractCurry.Build
 import AbstractCurry.Select
 import AbstractCurry.Transform
-import Char
 import ContractUsage
-import Directory
+import System.Directory
+import System.Process
+import System.Environment      (getArgs)
+import System.FilePath         (takeDirectory)
 import Distribution
-import FilePath          (takeDirectory)
-import List
-import Maybe             (fromJust, isNothing)
-import System
+import Data.List
+import Data.Char
+import Data.Maybe              (fromJust, isNothing)
 
 -- in order to use the determinism analysis:
-import Analysis.ProgInfo      (ProgInfo, lookupProgInfo)
-import Analysis.Deterministic (Deterministic(..), nondetAnalysis)
-import CASS.Server            (analyzeGeneric)
+import Analysis.ProgInfo       (ProgInfo, lookupProgInfo)
+import Analysis.Deterministic  (Deterministic(..), nondetAnalysis)
+import CASS.Server             (analyzeGeneric)
 
 import SimplifyPostConds
 import TheoremUsage
@@ -187,7 +188,7 @@ transformCProg verb opts srctxt orgprog outmodname = do
        putStrLn $ "Adding contract checking to: " ++ unwords checkfuns
      detinfo <- analyzeGeneric nondetAnalysis (progName prog)
                                               >>= return . either id error
-     let newprog = transformProgram opts funposs fdecls detinfo 
+     let newprog = transformProgram opts funposs fdecls detinfo
                                     funspecs preconds postconds prog
      return (Just (renameCurryModule outmodname newprog))
 
@@ -370,11 +371,11 @@ addContract opts funposs allfdecls predecls postdecls
                 addCmtLine "Without precondition checking!" $
                            rnmFDecl rename fdecl))
           (find (\fd -> fromPreCondName (snd (funcName fd)) == f) predecls)
-              
+
      -- Construct function with postcond. added and a function without postc.:
      (postcheck,wopostfdecl) =
         maybe ([],woprefdecl)
-          (\postdecl -> 
+          (\postdecl ->
             let postname = funcName postdecl
                 qnp      = funcName woprefdecl
                 rename   = updateFunc id qnp
@@ -502,10 +503,10 @@ renameProp2EasyCheck prog =
 
 --- Name of the Test.Prop module (the clone of the EasyCheck module).
 propModule :: String
-propModule = "Test.Prop" 
+propModule = "Test.Prop"
 
 --- Name of the EasyCheck module.
 easyCheckModule :: String
-easyCheckModule = "Test.EasyCheck" 
+easyCheckModule = "Test.EasyCheck"
 
 ------------------------------------------------------------------------

@@ -5,7 +5,7 @@ import Test.EasyCheck
 
 -- Example: parse World Cup soccer scores (e.g., "_:_", "3:2")
 
-import Char(isDigit)
+import Data.Char (isDigit)
 
 parse (team1++" _:_ "++team2) = (team1, team2, Nothing)
 parse (team1++[' ',x,':',y,' ']++team2)

@@ -10,9 +10,9 @@
 module RegexParser(parse) where
 
 import Parser
-import Char
-import List
-import ReadNumeric
+import Data.Char
+import Data.List
+import Numeric
 
 import ParseTypes
 
@@ -304,8 +304,12 @@ parseCBracket p r ts = pars p (cleanPM [(Times (curlyParser (init cont)) r)])
 curlyParser :: [Token] -> (Int,Int)
 curlyParser tks = (fst fir,fst sec)
   where
-    fir = maybe failed id (readNat (extractChars tks))
-    sec = maybe failed id (readNat (tail (snd fir)))
+    fir = case readNat (extractChars tks) of
+      [v] -> v
+      _   -> failed
+    sec = case readNat (tail (snd fir)) of
+      [v] -> v
+      _   -> failed
 
 --- Arrow bracket (Variable)
 parseABracket :: Pos -> [Token] -> PM (String,[Token])

@@ -5,17 +5,16 @@
     "synopsis": "The standard preprocessor of Curry",
     "category": [ "Programming", "Analysis" ],
     "dependencies": {
-        "base"          : ">= 1.0.0, < 2.0.0",
-        "abstract-curry": ">= 2.0.0",
-        "cass-analysis" : ">= 2.0.0",
-        "cass"          : ">= 2.0.0",
-        "cdbi"          : ">= 2.0.0",
-        "currycheck"    : ">= 2.0.0",
+        "abstract-curry": ">= 3.0.0",
+        "cass-analysis" : ">= 3.0.0",
+        "cass"          : ">= 3.0.0",
+        "cdbi"          : ">= 3.0.0",
+        "currycheck"    : ">= 3.0.0",
         "fl-parser"     : ">= 1.0.0",
-        "html"          : ">= 2.0.0",
-        "regexp"        : ">= 1.1.0",
-        "wl-pprint"     : ">= 0.0.1",
-        "xml"           : ">= 2.0.0"
+        "html"          : ">= 3.0.0",
+        "regexp"        : ">= 2.0.0",
+        "wl-pprint"     : ">= 2.0.0",
+        "xml"           : ">= 3.0.0"
     },
     "compilerCompatibility": {
         "pakcs": ">= 2.0.0",

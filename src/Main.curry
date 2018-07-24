@@ -12,18 +12,20 @@
 
 import AbstractCurry.Types
 import AbstractCurry.Files
-import AbstractCurry.Pretty(showCProg)
-import AbstractCurry.Select(progName)
-import Char(isDigit,digitToInt,isSpace)
-import Directory(copyFile,renameFile)
+import AbstractCurry.Pretty (showCProg)
+import AbstractCurry.Select (progName)
+import System.Directory     (copyFile,renameFile)
+import System.Process
+import System.CPUTime
+import System.Environment
+import System.FilePath
+import Data.List
+import Data.Char            (isDigit,digitToInt,isSpace)
 import Distribution
-import FilePath
-import List
-import System
 
-import TransICode     (translateIntCode)
-import TransDefRules  (transDefaultRules)
-import TransContracts (transContracts)
+import TransICode           (translateIntCode)
+import TransDefRules        (transDefaultRules)
+import TransContracts       (transContracts)
 
 cppBanner :: String
 cppBanner = unlines [bannerLine,bannerText,bannerLine]
@@ -40,12 +42,12 @@ parseTarget t | t=="foreigncode"  = Just ForeignCode
               | t=="defaultrules" = Just DefaultRules
               | t=="contracts"    = Just Contracts
               | otherwise         = Nothing
-              
+
 --- Preprocessor options:
 data PPOpts =
   PPOpts { optHelp      :: Bool
          , optSave      :: Bool       -- save the transformed program?
-         , optVerb      :: Int        -- verbosity 
+         , optVerb      :: Int        -- verbosity
          , optTgts      :: [PPTarget] -- targets of the preprocessor
          , optModel     :: String     -- model for the SQL preprocessor
          , optDefRules  :: [String]   -- options for DefaultRules
@@ -61,7 +63,7 @@ initOpts = PPOpts { optHelp      = False
                   , optDefRules  = []
                   , optContracts = []
                   }
-                  
+
 --- The main function of the Curry Preprocessor.
 main :: IO ()
 main = do
@@ -73,7 +75,7 @@ main = do
                if optHelp opts
                then putStrLn (cppBanner ++ usageText) >> exitWith 1
                else do
-                cpath <- getEnviron "CURRYPATH"
+                cpath <- getEnv "CURRYPATH"
                 let modname = pathToModName cpath orgSourceFile
                 when (optVerb opts > 1) $ putStr cppBanner
                 when (optVerb opts > 2) $ putStr $ unlines
@@ -112,7 +114,7 @@ processOptions opts optargs = case optargs of
                          then processOptions opts { optVerb = digitToInt vl } os
                          else Nothing
     (('-':'-':ts):os) -> if isPrefixOf "model:" ts
-                         then processOptions 
+                         then processOptions
                                 opts {optModel = tail (dropWhile (/=':') ts) }
                                 os
                          else Nothing
@@ -225,7 +227,7 @@ callPreprocessors opts optlines modname srcprog orgfile
           maybe done
                 (\defprog -> writeFile orgfile (optlines ++ showCProg defprog))
                 mbdefprog
-          readCurry modname >>= transContracts verb contopts srcprog 
+          readCurry modname >>= transContracts verb contopts srcprog
                             >>= return . maybe newsrcprog showCProg
         else return newsrcprog
   | Contracts `elem` pptargets

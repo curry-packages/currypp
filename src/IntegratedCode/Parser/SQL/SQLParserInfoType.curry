@@ -8,32 +8,32 @@
 --- a list of tupels of table name and list of corresponding column names,
 --- a list of tupels representing column name and its type as string.
 --- Furthermore a getter function for each part of the information
---- is defined returning it as FM instead of a list. A lookup function for 
+--- is defined returning it as FM instead of a list. A lookup function for
 --- relationships is provided either.
 ---@author: Julia Krone
 -- ----------------------------------------------------------------------------
-module SQLParserInfoType 
- (dbName, getRelations, getNullables, getAttrList, RelationType(..), 
+module SQLParserInfoType
+ (dbName, getRelations, getNullables, getAttrList, RelationType(..),
   ParserInfo(..), getTypes, lookupRel, RelationFM, cdbiModule,
   NullableFM, AttributesFM, AttrTypeFM)
-where 
+where
 
-import Char(toLower)
-import FiniteMap
-import List(partition)
+import Data.Char (toLower)
+import Data.List (partition)
+import qualified Data.Map as Map
 
 --- Type synonyms for all parts of the parser information
-type RelationFM = FM String (FM String [(String, RelationType)])
+type RelationFM = Map.Map String (Map.Map String [(String, RelationType)])
 type RelationTypes = [((String, String, String), RelationType)]
 
 type NullableFlags =  [(String, Bool)]
-type NullableFM = FM String Bool
+type NullableFM = Map.Map String Bool
 
 type AttributeLists =  [(String,(String, [String]))]
-type AttributesFM = FM String (String, [String]) 
+type AttributesFM = Map.Map String (String, [String])
 
-type AttributeTypes = [(String, String)] 
-type AttrTypeFM = FM String String 
+type AttributeTypes = [(String, String)]
+type AttrTypeFM = Map.Map String String
 
 --- Basic data type for parser information.
 data ParserInfo = PInfo String
@@ -41,12 +41,12 @@ data ParserInfo = PInfo String
                         RelationTypes
                         NullableFlags
                         AttributeLists
-                        AttributeTypes 
-                      
---- Data type representing possible relationships in the relational model.                        
-data RelationType = MtoN String 
-                   | NtoOne String 
-                   | OnetoN String 
+                        AttributeTypes
+
+--- Data type representing possible relationships in the relational model.
+data RelationType = MtoN String
+                   | NtoOne String
+                   | OnetoN String
 
 --- Getter for path to used database.
 dbName :: ParserInfo -> String
@@ -57,88 +57,88 @@ cdbiModule :: ParserInfo -> String
 cdbiModule (PInfo _ cdbi _ _ _ _) = cdbi
 
 --- Getter for relationships represented as nested FM for faster access.
-getRelations :: ParserInfo -> RelationFM 
+getRelations :: ParserInfo -> RelationFM
 getRelations (PInfo _ _ rels _ _ _) = splitRelations rels
 
 --- Getter for nullable-flag returned as a FM
-getNullables :: ParserInfo -> NullableFM 
-getNullables (PInfo _ _ _ nulls _ _) =  listToFM (>) nulls
+getNullables :: ParserInfo -> NullableFM
+getNullables (PInfo _ _ _ nulls _ _) = Map.fromList nulls
 
 --- Getter for for lists of attributes (columns)
 --- returned as FM.
 getAttrList :: ParserInfo -> AttributesFM
-getAttrList (PInfo _ _ _ _ attrs _ ) = listToFM (>) attrs
+getAttrList (PInfo _ _ _ _ attrs _ ) = Map.fromList attrs
 
 --- Getter for column types returnd as FM.
-getTypes :: ParserInfo -> AttrTypeFM 
-getTypes (PInfo _ _ _ _ _ types) = listToFM (>) types
+getTypes :: ParserInfo -> AttrTypeFM
+getTypes (PInfo _ _ _ _ _ types) = Map.fromList types
 
 --- Lookup function for RelationFM.
 --- In case of success return tuple of relation type
 --- and original notation.
-lookupRel :: (String, String, String) -> 
-             RelationFM -> 
+lookupRel :: (String, String, String) ->
+             RelationFM ->
              Maybe (RelationType, String)
-lookupRel (e1,rel,e2) fm = 
-  case lookupFM fm e1 of
+lookupRel (e1,rel,e2) fm =
+  case Map.lookup e1 fm of
     Nothing  -> Nothing
-    Just fm2 -> case lookupFM fm2 e2 of
+    Just fm2 -> case Map.lookup e2 fm2 of
                    Nothing -> Nothing
                    Just rels -> fetchRel rel rels
   where fetchRel _ [] = Nothing
-        fetchRel rName ((relName, relType):rs) = 
+        fetchRel rName ((relName, relType):rs) =
               if (toLowerCase rName) == (toLowerCase relName)
                 then (Just (relType, relName))
-                else fetchRel rName rs     
+                else fetchRel rName rs
 
-                
+
 -- auxiliary functions for the transformation of a list of tupels to
 -- a nested FM
 
-splitRelations ::  [((String, String, String), RelationType)] -> RelationFM  
-splitRelations [] = emptyFM (>)
-splitRelations (r:rels) = 
+splitRelations ::  [((String, String, String), RelationType)] -> RelationFM
+splitRelations []       = Map.empty
+splitRelations (r:rels) =
   let (frst, rest) = selectFirstEntity (frsEnt r) (r:rels)
-   in plusFM (createFM frst) (splitRelations rest)
+   in Map.union (splitRelations rest) (createFM frst)
 
 frsEnt :: ((String, String, String), RelationType) ->  String
-frsEnt ((ent, _ , _ ),_) = ent 
+frsEnt ((ent, _ , _ ),_) = ent
 
-sndEnt :: ((String, String, String), RelationType) ->  String 
-sndEnt (( _ , _ , ent ),_) = ent 
+sndEnt :: ((String, String, String), RelationType) ->  String
+sndEnt (( _ , _ , ent ),_) = ent
 
 selectFirstEntity :: String -> [((String, String, String), RelationType)]
                             -> ([((String,String, String), RelationType)],
-                                [((String, String, String), RelationType)]) 
+                                [((String, String, String), RelationType)])
 selectFirstEntity name rels = partition (\(( n, _, _),_) -> n == name) rels
 
 createFM :: [((String, String, String), RelationType)] -> RelationFM
-createFM [] = emptyFM (>)
-createFM (e:elems) = unitFM (>) (frsEnt e) (insertElems (e:elems))
+createFM []        = Map.empty
+createFM (e:elems) = Map.singleton (frsEnt e) (insertElems (e:elems))
 
 insertElems :: [((String, String, String), RelationType)] ->
-               (FM String [(String, RelationType)])
-insertElems [] = emptyFM (>)
-insertElems (e:elems) = let (snds, rest) = (selectSecondEntity (sndEnt e) 
-                                                               (e:elems))  
-                         in plusFM snds (insertElems rest)
+               (Map.Map String [(String, RelationType)])
+insertElems [] = Map.empty
+insertElems (e:elems) = let (snds, rest) = (selectSecondEntity (sndEnt e)
+                                                               (e:elems))
+                         in Map.union (insertElems rest) snds
 
-selectSecondEntity :: String -> 
+selectSecondEntity :: String ->
                       [((String, String, String), RelationType)] ->
-                      ((FM String [(String, RelationType)]),
+                      ((Map.Map String [(String, RelationType)]),
                           [((String, String, String), RelationType)])
-selectSecondEntity name rels = 
+selectSecondEntity name rels =
   let (fit, nfit) = partition (\((_ , _, n),_) -> n == name) rels
    in ((createSubFM fit), nfit)
-  where createSubFM [] = emptyFM (>)
-        createSubFM (((_,r,e2),rt):rs) = unitFM (>) 
-                                                e2 
+  where createSubFM [] = Map.empty
+        createSubFM (((_,r,e2),rt):rs) = Map.singleton
+                                                e2
                                                 ((r,rt):(map selectRelation rs))
 
-selectRelation :: ((String, String, String), RelationType) -> 
+selectRelation :: ((String, String, String), RelationType) ->
                   (String, RelationType)
 selectRelation ((_ , r, _), rt) = (r, rt)
-    
+
 
 toLowerCase :: String -> String
 toLowerCase str = map toLower str

@@ -1,5 +1,5 @@
 --- This module defines the Token needed to scan an embedded
---- SQL Statement. In Addition it defines a 'ToString'-method 
+--- SQL Statement. In Addition it defines a 'ToString'-method
 --- for all token.
 --- The supported datatypes, functions, operator etc. are based on
 --- the CDBI-Interface.
@@ -9,14 +9,14 @@
 
 module SQLToken where
 
-import Time (CalendarTime)
+import Data.Time (CalendarTime)
 
 
 data Token
   --identifier
     = Constant ConstVal
     | Ident String
-    | EmbedExp String 
+    | EmbedExp String
   --Keywords
     | KW_Select
     | KW_From
@@ -49,7 +49,7 @@ data Token
     | KW_Desc
     | KW_Limit
     | KW_Exists
-    | KW_Not  
+    | KW_Not
     | KW_Commit
     | KW_Rollback
     | KW_Begin
@@ -73,22 +73,22 @@ data Token
     | Unexpected Char
  deriving Eq
 
-data ConstVal = NumInt Int 
-              | NumFloat Float 
-              | Boolean Bool 
-              | Date CalendarTime 
-              | VarStr String 
+data ConstVal = NumInt Int
+              | NumFloat Float
+              | Boolean Bool
+              | Date CalendarTime
+              | VarStr String
               | VarChar Char
               | Null
  deriving Eq
 
 data Func = Sum | Avg | Min | Max | Count
  deriving Eq
- 
+
 data BinOperator = Lth | Gth | Lte | Gte | Equal | Uneq | Like
  deriving Eq
 
-data LogOperator = And | Or 
+data LogOperator = And | Or
  deriving Eq
 
 data SetOperator = Union | Intersect | Except
@@ -97,7 +97,7 @@ data SetOperator = Union | Intersect | Except
 --auxiliary function to print token for error messages
 tokentoString :: Token -> String
 tokentoString t = case t of
-                       Constant (NumInt int)     -> "interger " ++ show int 
+                       Constant (NumInt int)     -> "interger " ++ show int
                        Constant (NumFloat float) -> "float " ++ show float
                        Constant (Date date)      -> "date " ++ show date
                        Constant (Boolean bool)   -> "boolean " ++ show bool
@@ -129,11 +129,11 @@ tokentoString t = case t of
                        KW_Satisfies              -> "Satisfies"
                        KW_As                     -> "As"
                        KW_Distinct               -> "Distinct"
-                       KW_All                    -> "All"                     
+                       KW_All                    -> "All"
                        KW_Case                   -> "Case"
                        KW_When                   -> "When"
                        KW_Then                   -> "Then"
-                       KW_Else                   -> "Else" 
+                       KW_Else                   -> "Else"
                        KW_End                    -> "End"
                        KW_Commit                 -> "Commit"
                        KW_Rollback               -> "Rollback"
@@ -147,7 +147,7 @@ tokentoString t = case t of
                        KW_Desc                   -> "Desc"
                        KW_Limit                  -> "Limit"
                        KW_Exists                 -> "Exists"
-                       KW_Not                    -> "Not"   
+                       KW_Not                    -> "Not"
                        BinOp Lth                 -> "<"
                        BinOp Lte                 -> "<="
                        BinOp Gth                 -> ">"
@@ -171,4 +171,3 @@ tokentoString t = case t of
                        Asterix                   -> "*"
                        Unexpected c              -> ("Unsupported Character: "
                                                                       ++(c:""))
-                     
