@@ -1,6 +1,6 @@
 {
     "name": "currypp",
-    "version": "2.0.0",
+    "version": "3.0.0",
     "author": "Michael Hanus <mh@informatik.uni-kiel.de>",
     "synopsis": "The standard preprocessor of Curry",
     "category": [ "Programming", "Analysis" ],
