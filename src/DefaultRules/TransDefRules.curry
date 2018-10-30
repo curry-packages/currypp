@@ -3,7 +3,7 @@
 --- and deterministic functions.
 ---
 --- @author Michael Hanus
---- @version October 2016
+--- @version October 2018
 -----------------------------------------------------------------------------
 
 import AbstractCurry.Types
@@ -82,11 +82,12 @@ transDefaultRules verb moreopts _ prog = do
 -- of proof files:
 filterProofObligation :: Int -> [String] -> [QName] -> IO [QName]
 filterProofObligation _ _ [] = return []
-filterProofObligation verb prooffiles (qf@(_,fn) : qfs) = do
-  let hasdetproof = existsProofFor (determinismTheoremFor fn) prooffiles
+filterProofObligation verb prooffiles (qf@(mn,fn) : qfs) = do
+  let dettheoname = (mn, determinismTheoremFor fn)
+      hasdetproof = existsProofFor dettheoname prooffiles
   when (hasdetproof && verb>0) $ putStrLn $
     "Proofs for determinism property of " ++ showQName qf ++ " found:\n" ++
-    unlines (filter (isProofFileNameFor (determinismTheoremFor fn)) prooffiles)
+    unlines (filter (isProofFileNameFor dettheoname) prooffiles)
   filterqfs <- filterProofObligation verb prooffiles qfs
   return (if hasdetproof then filterqfs else qf : filterqfs)
 
