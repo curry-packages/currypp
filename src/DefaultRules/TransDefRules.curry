@@ -18,7 +18,9 @@ import Distribution
 import FilePath (takeDirectory)
 import List(isPrefixOf,isSuffixOf,partition)
 import System
-import TheoremUsage
+import TheoremUsage ( determinismTheoremFor, existsProofFor
+                    , getModuleProofFiles, isProofFileNameFor )
+
 
 --------------------------------------------------------------------
 
@@ -26,7 +28,7 @@ banner :: String
 banner = unlines [bannerLine,bannerText,bannerLine]
  where
    bannerText =
-     "Transformation Tool for Curry with Default Rules (Version of 08/06/16)"
+     "Transformation Tool for Curry with Default Rules (Version of 31/10/18)"
    bannerLine = take (length bannerText) (repeat '=')
 
 ------------------------------------------------------------------------
@@ -55,7 +57,8 @@ transDefaultRules verb moreopts _ prog = do
   maybe (return Nothing)
    (\ (detfuncnames,newprog) -> do
       -- check whether we have files with determinism proofs:
-      prfiles <- getProofFiles (takeDirectory (modNameToPath (progName prog)))
+      let mname = progName prog
+      prfiles <- getModuleProofFiles (takeDirectory (modNameToPath mname)) mname
       detfuncnamesWOproofs <- filterProofObligation verb prfiles detfuncnames
       when (verb>0) $ printProofObligation detfuncnamesWOproofs
       return (Just newprog))
