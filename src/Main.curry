@@ -7,7 +7,7 @@
 --- is supported (option `foreigncode`, see module `Translator`).
 ---
 --- @author Michael Hanus
---- @version January 2018
+--- @version December 2018
 ------------------------------------------------------------------------------
 
 import AbstractCurry.Types
@@ -16,10 +16,11 @@ import AbstractCurry.Pretty(showCProg)
 import AbstractCurry.Select(progName)
 import Char(isDigit,digitToInt,isSpace)
 import Directory(copyFile,renameFile)
-import Distribution
 import FilePath
 import List
 import System
+
+import System.CurryPath ( stripCurrySuffix )
 
 import TransICode     (translateIntCode)
 import TransDefRules  (transDefaultRules)

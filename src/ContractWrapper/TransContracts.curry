@@ -11,10 +11,18 @@
 --- > Declarative Languages (PADL 2012), pp. 33-47, Springer LNCS 7149, 2012
 ---
 --- @author Michael Hanus
---- @version October 2016
+--- @version December 2018
 ------------------------------------------------------------------------
 
 module TransContracts(main,transContracts) where
+
+import Char
+import Directory
+import Distribution      ( installDir )
+import FilePath          ( takeDirectory )
+import List
+import Maybe             ( fromJust, isNothing )
+import System
 
 import AbstractCurry.Types
 import AbstractCurry.Files
@@ -22,19 +30,14 @@ import AbstractCurry.Pretty
 import AbstractCurry.Build
 import AbstractCurry.Select
 import AbstractCurry.Transform
-import Char
 import ContractUsage
-import Directory
-import Distribution
-import FilePath          (takeDirectory)
-import List
-import Maybe             (fromJust, isNothing)
-import System
+import System.CurryPath ( lookupModuleSourceInLoadPath, modNameToPath
+                        , stripCurrySuffix)
 
 -- in order to use the determinism analysis:
-import Analysis.ProgInfo      (ProgInfo, lookupProgInfo)
-import Analysis.Deterministic (Deterministic(..), nondetAnalysis)
-import CASS.Server            (analyzeGeneric)
+import Analysis.ProgInfo      ( ProgInfo, lookupProgInfo )
+import Analysis.Deterministic ( Deterministic(..), nondetAnalysis )
+import CASS.Server            ( analyzeGeneric )
 
 import SimplifyPostConds
 import TheoremUsage

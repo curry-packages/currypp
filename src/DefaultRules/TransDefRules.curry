@@ -3,23 +3,22 @@
 --- and deterministic functions.
 ---
 --- @author Michael Hanus
---- @version October 2018
+--- @version December 2018
 -----------------------------------------------------------------------------
+
+import Distribution ( curryCompiler )
+import FilePath     ( takeDirectory )
+import List         ( partition )
 
 import AbstractCurry.Types
 import AbstractCurry.Files
 import AbstractCurry.Select
 import AbstractCurry.Build
 import AbstractCurry.Pretty
-import Char(isDigit,digitToInt)
 import DefaultRuleUsage
-import Directory
-import Distribution
-import FilePath (takeDirectory)
-import List(isPrefixOf,isSuffixOf,partition)
-import System
-import TheoremUsage ( determinismTheoremFor, existsProofFor
-                    , getModuleProofFiles, isProofFileNameFor )
+import System.CurryPath ( modNameToPath )
+import TheoremUsage     ( determinismTheoremFor, existsProofFor
+                        , getModuleProofFiles, isProofFileNameFor )
 
 
 --------------------------------------------------------------------
