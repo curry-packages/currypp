@@ -8,7 +8,7 @@
 --- <http://pubs.opengroup.org/onlinepubs/009695399/functions/fprintf.html>
 ------------------------------------------------------------------------------
 
-import Format -- required in the pre-processed program
+import Data.Format -- required in the pre-processed program
 
 -- Format a string and an integer:
 ex1 :: String -> Int -> IO ()

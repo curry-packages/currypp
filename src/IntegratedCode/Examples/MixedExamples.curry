@@ -6,7 +6,7 @@
 ------------------------------------------------------------------------------
 
 import RegExp
-import Format
+import Data.Format
 
 isEmail :: String -> Bool
 isEmail s = s ``regex

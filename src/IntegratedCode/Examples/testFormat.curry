@@ -9,7 +9,7 @@
 --- <http://pubs.opengroup.org/onlinepubs/009695399/functions/fprintf.html>
 ------------------------------------------------------------------------------
 
-import Format -- required in the pre-processed program
+import qualified Data.Format -- required in the pre-processed program
 import Test.EasyCheck
 
 -- Format a string and an integer:

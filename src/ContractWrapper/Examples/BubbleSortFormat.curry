@@ -4,7 +4,7 @@
 -- Example for using integrated code, default rules, and contracts in one
 -- module
 
-import Format
+import Data.Format
 import Test.Prop
 
 showInt i =  ``format "%+.3d",i''
