@@ -1,6 +1,6 @@
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=defaultrules #-}
 
-import Test.EasyCheck
+import Test.Prop
 
 -- Lookup with default rules:
 nlookup key (_ ++ [(key,value)] ++ _) = Just value

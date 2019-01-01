@@ -1,7 +1,7 @@
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=defaultrules #-}
 {-# OPTIONS_CYMAKE -Wnone #-}
 
-import Test.EasyCheck
+import Test.Prop
 
 -- Warning: these redefinitions work fine with KiCS2, but with PAKCS
 -- they do not work on infinite lists due to restrictions on set functions.

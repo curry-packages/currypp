@@ -342,7 +342,7 @@ preUntyped :: CTypeExpr
 preUntyped = CTCons (pre "untyped")
 
 setFunMod :: String
-setFunMod = "SetFunctions"
+setFunMod = "Control.SetFunctions"
 
 --- Extracts all elements with a single occurrence in a given list.
 extractSingles :: Eq a => [a] -> [a]

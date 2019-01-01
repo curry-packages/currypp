@@ -1,6 +1,6 @@
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=defaultrules #-}
 
-import Test.EasyCheck
+import Test.Prop
 
 -- Operation to delete suffixes of the fornm ".0"
 fix_int (s++".0") = s

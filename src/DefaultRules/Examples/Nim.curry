@@ -1,7 +1,7 @@
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=defaultrules #-}
 {-# OPTIONS_CYMAKE -Wnone #-}
 
-import Test.EasyCheck
+import Test.Prop
 
 -- A simple implementation of a two-person game (here: Nim) with default rules
 --

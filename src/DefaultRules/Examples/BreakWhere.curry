@@ -1,6 +1,6 @@
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=defaultrules #-}
 
-import Test.EasyCheck
+import Test.Prop
 
 -- The following task should be solved:
 -- Break a Curry main expression into an expression and a where...free clause.

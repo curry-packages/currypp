@@ -1,7 +1,7 @@
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=defaultrules #-}
 
-import Test.EasyCheck
-import SetFunctions
+import Test.Prop
+import Control.SetFunctions
 
 -- Bubble sort formulation with default rule
 

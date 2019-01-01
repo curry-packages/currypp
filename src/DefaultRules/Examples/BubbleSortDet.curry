@@ -1,6 +1,6 @@
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=defaultrules #-}
 
-import Test.EasyCheck
+import Test.Prop
 
 -- Bubble sort formulation with default rule as deterministic function
 

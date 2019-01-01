@@ -1,7 +1,7 @@
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=defaultrules #-}
 {-# OPTIONS_CYMAKE -Wnone #-}
 
-import Test.EasyCheck
+import Test.Prop
 
 -- Reverse a list if it has exactly two elements:
 rev2 :: [a] -> [a]

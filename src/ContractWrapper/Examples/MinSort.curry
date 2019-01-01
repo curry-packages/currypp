@@ -1,7 +1,7 @@
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=contracts #-}
 
 -- straight selection sort with specification
-import SetFunctions
+import Control.SetFunctions
 
 perm []     = []
 perm (x:xs) = insert (perm xs)

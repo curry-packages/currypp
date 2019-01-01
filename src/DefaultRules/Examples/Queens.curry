@@ -1,7 +1,7 @@
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=defaultrules #-}
 {-# OPTIONS_CYMAKE -Wnone #-}
 
-import Test.EasyCheck
+import Test.Prop
 
 -------------------------------------------------------------------------
 -- Definition of n-queens with default rules:

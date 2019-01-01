@@ -53,6 +53,11 @@
                        "FixInt", "FloatString", "Guards", "ListFuns", "Lookup",
                        "Nim", "ParOr", "Queens", "Rev2", "WorldCup",
                        "ParOrDet", "BubbleSortDet", "DutchFlagDet" ]
+        },
+        { "src-dir": "src/ContractWrapper/Examples",
+          "options": "--nospec --nodet --deftype=Int",
+          "modules": [ "BubbleSort", "BubbleSortFormat", "Coin",
+                       "FibInfinite", "Quicksort" ]
         }
     ],
     "documentation": {

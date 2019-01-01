@@ -10,7 +10,7 @@
 ------------------------------------------------------------------------------
 
 import qualified Data.Format -- required in the pre-processed program
-import Test.EasyCheck
+import Test.Prop
 
 -- Format a string and an integer:
 ex1 :: String -> Int -> String

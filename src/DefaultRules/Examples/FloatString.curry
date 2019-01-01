@@ -1,6 +1,6 @@
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=defaultrules #-}
 
-import Test.EasyCheck
+import Test.Prop
 
 -- Example: predicate to check for float strings
 

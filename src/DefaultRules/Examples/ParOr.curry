@@ -1,7 +1,7 @@
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=defaultrules #-}
 {-# OPTIONS_CYMAKE -Wnone #-}
 
-import Test.EasyCheck
+import Test.Prop
 
 -- Parallel or with default rules:
 por True  _     = True

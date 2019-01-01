@@ -219,7 +219,7 @@ transformProgram opts funposs allfdecls detinfo specdecls predecls postdecls
      -- compute postconditions actually used for contract checking:
      contractpcs  = postdecls++newpostconds
   in CurryProg mname
-               (nub ("Test.Contract":"SetFunctions":imps))
+               (nub ("Test.Contract":"Control.SetFunctions":imps))
                dfltdecl clsdecls instdecls tdecls
                (map deleteCmtIfEmpty
                   (concatMap
@@ -414,9 +414,9 @@ withSuffix (m,f) s = (m, f ++ s)
 cMod :: String -> QName
 cMod f = ("Test.Contract",f)
 
--- An operation of the module SetFunctions:
+-- An operation of the module Control.SetFunctions:
 sfMod :: String -> QName
-sfMod f = ("SetFunctions",f)
+sfMod f = ("Control.SetFunctions",f)
 
 -- Set function for a function name with given arity and arguments:
 setFun :: Int -> QName -> [CExpr] -> CExpr

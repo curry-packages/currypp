@@ -6,7 +6,7 @@
 ------------------------------------------------------------------------------
 
 import HTML.Base
-import Test.EasyCheck
+import Test.Prop
 
 htmlTest1 :: String -> [HtmlExp]
 htmlTest1 name = ``html
