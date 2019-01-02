@@ -16,6 +16,7 @@
         "html"          : ">= 2.0.0",
         "printf"        : ">= 0.0.1",
         "regexp"        : ">= 1.1.0",
+        "searchtree"    : ">= 0.0.1",
         "setfunctions"  : ">= 0.0.1",
         "wl-pprint"     : ">= 0.0.1",
         "xml"           : ">= 2.0.0",

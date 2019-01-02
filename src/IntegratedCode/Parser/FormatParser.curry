@@ -31,7 +31,8 @@ module FormatParser ( parse ) where
 import Parser
 import Char
 import ReadNumeric
-import AllSolutions
+
+import Control.AllSolutions ( getOneSolution )
 
 import ParseTypes
 
