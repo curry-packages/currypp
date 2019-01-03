@@ -12,6 +12,7 @@
         "cdbi"          : ">= 2.0.0",
         "currycheck"    : ">= 2.0.0",
         "currypath"     : ">= 0.0.1",
+        "finite-map"    : ">= 0.0.1",
         "fl-parser"     : ">= 1.0.0",
         "html"          : ">= 2.0.0",
         "printf"        : ">= 0.0.1",

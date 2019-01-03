@@ -8,7 +8,7 @@
 
 module Symboltab where
 
-import FiniteMap 
+import Data.FiniteMap 
 
 --- A Symboltable consists of at least one pair of FiniteMaps.
 --- There can be another table representing a surrounding scope.

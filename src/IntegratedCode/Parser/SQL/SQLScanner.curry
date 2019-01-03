@@ -6,11 +6,12 @@
 module SQLScanner(scan) where
 
 import Char (isDigit, isAlpha, isAlphaNum, toLower)
-import FiniteMap
 import List (splitOn)
 import Read (readInt)
 import ReadShowTerm (readsQTerm)
 import Time 
+
+import Data.FiniteMap
 
 import SQLToken
 

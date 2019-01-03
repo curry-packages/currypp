@@ -19,8 +19,9 @@ module SQLParserInfoType
 where 
 
 import Char(toLower)
-import FiniteMap
 import List(partition)
+
+import Data.FiniteMap
 
 --- Type synonyms for all parts of the parser information
 type RelationFM = FM String (FM String [(String, RelationType)])

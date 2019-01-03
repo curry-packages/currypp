@@ -20,8 +20,9 @@
 module SQLConsistency(checkConsistency) where
 
 import Char(toLower, toUpper)
-import FiniteMap
 import List(delete)
+
+import Data.FiniteMap
 
 import ParseTypes
 

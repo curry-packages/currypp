@@ -21,9 +21,10 @@
 module SQLTyper(checkTypes) where
 
 import Char(toLower, toUpper)
-import FiniteMap
 import List(isInfixOf)
 import Time
+
+import Data.FiniteMap
 
 import ParseTypes
 
