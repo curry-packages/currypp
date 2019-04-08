@@ -316,6 +316,7 @@ genPostCond4Spec _ allfdecls detinfo postdecls
                            (constF obsfun : map CVar argvars))]
      ]
 
+
 -- Transform a type into Eq constraints for all type variables occurring
 -- in this type. Note: this is not sufficient since one needs also be
 -- sure that each type constructor has an Eq instance.
@@ -330,13 +331,21 @@ type2ShowConstraints :: CTypeExpr -> [CConstraint]
 type2ShowConstraints texp =
   map (\tv -> (pre "Show",CTVar tv)) (nub (tvarsOfType texp))
 
+-- Extends a qualified type with Show constraints for all type variables
+-- and Eq constraints for all type variables of the result type.
+addEqShowConstraints :: CQualTypeExpr -> CQualTypeExpr
+addEqShowConstraints (CQualType (CContext clscons) texp) =
+  CQualType (CContext (union (type2EqConstraints (resultType texp))
+                             (union (type2ShowConstraints texp) clscons)))
+            texp
+
 -- adds contract checking to a function if it has a pre- or postcondition
 addContract :: Options -> [(QName,Int)] -> [CFuncDecl] -> [CFuncDecl]
             -> [CFuncDecl] -> CFuncDecl -> [CFuncDecl]
 addContract _ _ _ _ _ (CFunc _ _ _ _ _) =
   error "Internal error in addContract: CFunc occurred"
 addContract opts funposs allfdecls predecls postdecls
-   fdecl@(CmtFunc cmt qn@(m,f) ar vis (CQualType (CContext clscons) texp) _) =
+            orgfdecl@(CmtFunc cmt qn@(m,f) ar vis qtype _) =
  let argvars   = map (\i -> (i,"x"++show i)) [1..ar]
      encapsSuf = if withEncapsulate opts then "ND" else ""
      encaps fn n = if withEncapsulate opts then setFun n fn [] else constF fn
@@ -354,10 +363,8 @@ addContract opts funposs allfdecls predecls postdecls
                        (find (\fd -> snd (funcName fd) == f++"'post'observe")
                              allfdecls)
 
-     ctexp = CQualType (CContext
-                         (union (type2EqConstraints (resultType texp))
-                                (union (type2ShowConstraints texp) clscons)))
-                       texp
+     ctexp = addEqShowConstraints qtype
+     fdecl = setTypeInFuncDecl ctexp orgfdecl
 
      -- Construct function with precondition added and a function without prec.:
      (precheck,woprefdecl) =
@@ -405,6 +412,10 @@ updateFunc f x v y = if y==x then v else f y
 --- Define a function as private.
 setPrivate :: CFuncDecl -> CFuncDecl
 setPrivate = updCFuncDecl id id id (const Private) id id
+
+--- Sets the type of a function declaration.
+setTypeInFuncDecl :: CQualTypeExpr -> CFuncDecl -> CFuncDecl
+setTypeInFuncDecl texp = updCFuncDecl id id id id (const texp) id
 
 --- Adds a suffix to  qualified name.
 withSuffix :: QName -> String -> QName
