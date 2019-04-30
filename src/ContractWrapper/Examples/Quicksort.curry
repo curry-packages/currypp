@@ -16,9 +16,11 @@ sorted [_]      = True
 sorted (x:y:ys) = x<=y && sorted (y:ys)
 
 -- Trivial precondition, just for testing
+sort'pre :: [Int] -> Bool
 sort'pre xs = length xs >= 0
 
 -- Postcondition: input and output lists should have the same length
+sort'post :: [Int] -> [Int] -> Bool
 sort'post xs ys = length xs == length ys
 
 -- Specification of sort:

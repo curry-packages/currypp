@@ -226,11 +226,11 @@ callPreprocessors opts optlines modname srcprog orgfile
           maybe done
                 (\defprog -> writeFile orgfile (optlines ++ showCProg defprog))
                 mbdefprog
-          readCurry modname >>= transContracts verb contopts srcprog 
+          readCurry modname >>= transContracts verb contopts modname srcprog 
                             >>= return . maybe newsrcprog showCProg
         else return newsrcprog
   | Contracts `elem` pptargets
-  = readCurry modname >>= transContracts verb contopts srcprog
+  = readCurry modname >>= transContracts verb contopts modname srcprog
                       >>= return . maybe srcprog showCProg
   | otherwise
   = error "currypp internal error during dispatching"

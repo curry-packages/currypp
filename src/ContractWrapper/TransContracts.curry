@@ -11,10 +11,10 @@
 --- > Declarative Languages (PADL 2012), pp. 33-47, Springer LNCS 7149, 2012
 ---
 --- @author Michael Hanus
---- @version December 2018
+--- @version April 2019
 ------------------------------------------------------------------------
 
-module TransContracts(main,transContracts) where
+module TransContracts( main, transContracts ) where
 
 import Char
 import Directory
@@ -30,7 +30,10 @@ import AbstractCurry.Pretty
 import AbstractCurry.Build
 import AbstractCurry.Select
 import AbstractCurry.Transform
-import ContractUsage
+import Contract.Names
+import Contract.Usage   ( checkContractUsage )
+import FlatCurry.Files  ( readFlatCurry )
+import qualified FlatCurry.Goodies as FCG
 import System.CurryPath ( lookupModuleSourceInLoadPath, modNameToPath
                         , stripCurrySuffix)
 
@@ -47,7 +50,7 @@ import TheoremUsage
 banner :: String
 banner = unlines [bannerLine,bannerText,bannerLine]
  where
-   bannerText = "Contract Transformation Tool (Version of 12/08/16)"
+   bannerText = "Contract Transformation Tool (Version of 30/04/19)"
    bannerLine = take (length bannerText) (repeat '=')
 
 ------------------------------------------------------------------------
@@ -57,11 +60,12 @@ banner = unlines [bannerLine,bannerText,bannerLine]
 --- based on function types!
 --- The result is `Nothing` if no transformation was applied or `Just` the
 --- transformed program.
-transContracts :: Int -> [String] -> String -> CurryProg -> IO (Maybe CurryProg)
-transContracts verb moreopts srcprog inputProg = do
+transContracts :: Int -> [String] -> String -> String -> CurryProg
+               -> IO (Maybe CurryProg)
+transContracts verb moreopts modname srcprog inputProg = do
   when (verb>1) $ putStr banner
   opts <- processOpts defaultOptions moreopts
-  transformCProg verb opts srcprog inputProg (progName inputProg)
+  transformCProg verb opts modname srcprog inputProg (progName inputProg)
  where
   processOpts opts ppopts = case ppopts of
     []          -> return opts
@@ -131,7 +135,7 @@ transformStandalone opts modname outfile = do
   doesFileExist acyfile >>= \b -> if b then done
                                        else error "Source program incorrect"
   let outmodname = transformedModName modname
-  newprog <- transformCProg 1 opts srcprog prog outmodname
+  newprog <- transformCProg 1 opts modname srcprog prog outmodname
   writeFile outfile (showCProg (maybe prog id newprog) ++ "\n")
   when (executeProg opts) $ loadIntoCurry outmodname
 
@@ -151,23 +155,27 @@ loadIntoCurry m = do
 --- The main transformation operation with parameters:
 --- * verbosity level
 --- * options
+--- * module name
 --- * source text of the module
 --- * AbstractCurry representation of the module
 --- * name of the output module (if it should be renamed)
 --- The result is Nothing if no transformation was applied or Just the
 --- transformed program.
-transformCProg :: Int -> Options -> String -> CurryProg -> String
+transformCProg :: Int -> Options -> String -> String -> CurryProg -> String
                -> IO (Maybe CurryProg)
-transformCProg verb opts srctxt orgprog outmodname = do
-  let -- to avoid constructor CFunc and references to Test.Prop
-      prog = addCmtFuncInProg (renameProp2EasyCheck orgprog)
-      usageerrors = checkContractUse prog
+transformCProg verb opts modname srctxt orgprog outmodname = do
+  fcyprog <- readFlatCurry modname
+  let usageerrors = checkContractUsage modname
+                      (map (\fd -> (snd (FCG.funcName fd), FCG.funcType fd))
+                           (FCG.progFuncs fcyprog))
   unless (null usageerrors) $ do
     putStr (unlines $ "ERROR: ILLEGAL USE OF CONTRACTS:" :
                map (\ ((mn,fn),err) -> fn ++ " (module " ++ mn ++ "): " ++ err)
                    usageerrors)
     error "Contract transformation aborted"
-  let funposs      = linesOfFDecls srctxt prog
+  let -- to avoid constructor CFunc and references to Test.Prop
+      prog = addCmtFuncInProg (renameProp2EasyCheck orgprog)
+      funposs      = linesOfFDecls srctxt prog
       fdecls       = functions prog
       funspecs     = getFunDeclsWith isSpecName prog
       specnames    = map (fromSpecName . snd . funcName) funspecs

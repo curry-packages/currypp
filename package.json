@@ -10,10 +10,12 @@
         "cass-analysis" : ">= 2.0.0",
         "cass"          : ">= 2.0.0",
         "cdbi"          : ">= 2.0.0",
+        "contracts"     : ">= 0.0.1",
         "currycheck"    : ">= 2.0.0",
         "currypath"     : ">= 0.0.1",
         "finite-map"    : ">= 0.0.1",
         "fl-parser"     : ">= 1.0.0",
+        "flatcurry"     : ">= 2.0.0",
         "html"          : ">= 2.0.0",
         "printf"        : ">= 0.0.1",
         "regexp"        : ">= 1.1.0",
@@ -22,7 +24,6 @@
         "wl-pprint"     : ">= 0.0.1",
         "xml"           : ">= 2.0.0",
 
-        "contracts"     : ">= 0.0.1",
         "easycheck"     : ">= 0.0.1"
     },
     "compilerCompatibility": {
