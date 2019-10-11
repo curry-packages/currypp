@@ -1,10 +1,46 @@
 -----------------------------------------------------------------------------
---- Translator for Curry programs to implement default rules
---- and deterministic functions.
+--- Default Rules Preprocessor
+--- ==========================
+--- 
+--- This module contains the implementation of a preprocessor
+--- for Curry programs in order to implement default rules
+--- and deterministic operations.
+--- 
+--- A default rule for a function `f` processed by this preprocessor
+--- must be defined as a rule defining the operation `f'default`, e.g.,
+--- 
+---     nlookup key (_ ++ [(key,value)] ++ _) = Just value
+---     nlookup'default _   _                 = Nothing 
+--- 
+--- The concept of default rules and their implementation are described in
+--- 
+---     Sergio Antoy, Michael Hanus: Default Rules for Curry
+---     Theory and Practice of Logic Programming,
+---     Vol. 17, No. 2, pp. 121-147, 2017 
+--- 
+--- An operation can be marked as deterministic by decorating the
+--- result type with `DET`, e.g.,
+--- 
+---     psort :: [Int] -> DET [Int]
+--- 
+--- The concept of deterministic operations and their implementation
+--- are described in
+--- 
+---     Sergio Antoy, Michael Hanus:
+---     Eliminating Irrelevant Non-determinism in Functional Logic Programs
+---     Proc. 19th Int. Symp. on Practical Aspects of Declarative Languages,
+---     Springer LNCS 10137, pp. 1-18, 2017 
+--- 
+--- This preprocessor can be invoked by the Curry preprocessor `currypp`
+--- with the option `defaultrules` (provided as a CYMAKE option,
+--- see the example programs in the directory `examples/DefaultRules`).
 ---
 --- @author Michael Hanus
---- @version December 2018
+--- @version October 2019
 -----------------------------------------------------------------------------
+
+module CPP.DefaultRules ( translateDefaultRulesAndDetOps )
+ where
 
 import Distribution ( curryCompiler )
 import FilePath     ( takeDirectory )
@@ -20,6 +56,7 @@ import System.CurryPath ( modNameToPath )
 import TheoremUsage     ( determinismTheoremFor, existsProofFor
                         , getModuleProofFiles, isProofFileNameFor )
 
+import CPP.CompileWithFrontend ( compileImportedModule )
 
 --------------------------------------------------------------------
 
@@ -27,7 +64,7 @@ banner :: String
 banner = unlines [bannerLine,bannerText,bannerLine]
  where
    bannerText =
-     "Transformation Tool for Curry with Default Rules (Version of 31/10/18)"
+     "Transformation Tool for Curry with Default Rules (Version of 11/10/19)"
    bannerLine = take (length bannerText) (repeat '=')
 
 ------------------------------------------------------------------------
@@ -44,16 +81,18 @@ defaultTransScheme = if curryCompiler == "kics2"
                      else SpecScheme -- NoDupScheme
 
 ------------------------------------------------------------------------
--- Start default rules transformation in "preprocessor mode".
--- The Curry program must be read with readUntypedCurry in order to
--- process DET annotations!
-transDefaultRules :: Int -> [String] -> String -> CurryProg
-                  -> IO (Maybe CurryProg)
-transDefaultRules verb moreopts _ prog = do
+--- Start default rules/deterministic operations transformation
+--- in "preprocessor mode".
+--- It is assumed that the Curry program passed as the last argument
+--- was read with `readUntypedCurry` which is important to
+--- process DET annotations!
+translateDefaultRulesAndDetOps :: Int -> [String] -> String -> CurryProg
+                               -> IO (Maybe CurryProg)
+translateDefaultRulesAndDetOps verb moreopts _ prog = do
   when (verb>1) $ putStr banner
   trscm <- processOpts moreopts
   when (verb>1) $ putStrLn ("Translation scheme: " ++ show trscm)
-  mbtransprog <- translateProg trscm prog
+  mbtransprog <- translateProg verb trscm prog
   maybe (return Nothing)
    (\ (detfuncnames,newprog) -> do
       -- check whether we have files with determinism proofs:
@@ -115,8 +154,9 @@ showQName (qn,fn) = "'" ++ qn ++ "." ++ fn ++ "'"
 -- transformation).
 -- If the program was not transformed, `Nothing` is returned.
 
-translateProg :: TransScheme -> CurryProg -> IO (Maybe ([QName],CurryProg))
-translateProg trscm
+translateProg :: Int -> TransScheme -> CurryProg
+              -> IO (Maybe ([QName],CurryProg))
+translateProg verb trscm
   prog@(CurryProg mn imps dfltdecl clsdecls instdecls tdecls fdecls ops) = do
   let usageerrors = checkDefaultRules prog
   unless (null usageerrors) $ do
@@ -125,10 +165,13 @@ translateProg trscm
                    usageerrors)
     error "Transformation aborted"
   -- now we do not have to check the correct usage of default rules...
+  unless (setFunMod `elem` imps) $
+    compileImportedModule verb setFunMod
   return $ if null deffuncs && null detfuncnames
-         then Nothing
-         else Just (detfuncnames, CurryProg mn newimports dfltdecl clsdecls
-                                            instdecls tdecls newfdecls ops)
+             then Nothing
+             else Just (detfuncnames,
+                        CurryProg mn newimports dfltdecl clsdecls
+                                  instdecls tdecls newfdecls ops)
  where
   newimports       = if setFunMod `elem` imps then imps else setFunMod:imps
   detfuncnames     = map funcName (filter isDetFun fdecls)

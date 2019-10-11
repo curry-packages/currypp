@@ -1,10 +1,9 @@
 ------------------------------------------------------------------------
-A transformation tool to generate a Curry module with
-assertion checking from pre/postconditions and specifications.
+The preprocessor contains a transformation tool to generate
+a Curry module with assertion checking from pre/postconditions
+and specifications.
 
-Sergio Antoy, Michael Hanus
-
-August 12, 2016
+The tool is implemented in the module `CPP.Contracts`.
 
 ------------------------------------------------------------------------
 How to use the tool:
@@ -17,7 +16,7 @@ beginning of your Curry module:
 
 If postconditions or specifications are nondeterministic,
 it is better that they will be evaluated via encapsulated search
-(see Examples/NDAssertion.curry for a discussion).
+(see `examples/Contracts/NDAssertion.curry` for a discussion).
 For this purpose use the option "-e" as follows:
 
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=contracts --optF=-e #-}
@@ -69,7 +68,7 @@ Assumptions:
 ------------------------------------------------------------------------
 Examples:
 
-See programs in the directory Examples
+See programs in the directory `examples/Contracts`.
 
 ------------------------------------------------------------------------
 Known problems:

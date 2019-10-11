@@ -14,7 +14,8 @@
 --- @version April 2019
 ------------------------------------------------------------------------
 
-module TransContracts( main, transContracts ) where
+module CPP.Contracts ( main, translateContracts )
+  where
 
 import Char
 import Directory
@@ -45,12 +46,14 @@ import CASS.Server            ( analyzeGeneric )
 import SimplifyPostConds
 import TheoremUsage
 
+import CPP.CompileWithFrontend ( compileImportedModule )
+
 ------------------------------------------------------------------------
 
 banner :: String
 banner = unlines [bannerLine,bannerText,bannerLine]
  where
-   bannerText = "Contract Transformation Tool (Version of 30/04/19)"
+   bannerText = "Contract Transformation Tool (Version of 11/10/19)"
    bannerLine = take (length bannerText) (repeat '=')
 
 ------------------------------------------------------------------------
@@ -60,9 +63,9 @@ banner = unlines [bannerLine,bannerText,bannerLine]
 --- based on function types!
 --- The result is `Nothing` if no transformation was applied or `Just` the
 --- transformed program.
-transContracts :: Int -> [String] -> String -> String -> CurryProg
-               -> IO (Maybe CurryProg)
-transContracts verb moreopts modname srcprog inputProg = do
+translateContracts :: Int -> [String] -> String -> String -> CurryProg
+                   -> IO (Maybe CurryProg)
+translateContracts verb moreopts modname srcprog inputProg = do
   when (verb>1) $ putStr banner
   opts <- processOpts defaultOptions moreopts
   transformCProg verb opts modname srcprog inputProg (progName inputProg)
@@ -198,8 +201,8 @@ transformCProg verb opts modname srctxt orgprog outmodname = do
        putStrLn $ "Adding contract checking to: " ++ unwords checkfuns
      detinfo <- analyzeGeneric nondetAnalysis (progName prog)
                                               >>= return . either id error
-     let newprog = transformProgram opts funposs fdecls detinfo 
-                                    funspecs preconds postconds prog
+     newprog <- transformProgram verb opts funposs fdecls detinfo 
+                                 funspecs preconds postconds prog
      return (Just (renameCurryModule outmodname newprog))
 
 -- Get functions from a Curry module with a name satisfying the predicate:
@@ -208,33 +211,35 @@ getFunDeclsWith pred prog = filter (pred . snd . funcName) (functions prog)
 
 ------------------------------------------------------------------------
 -- Transform a given program w.r.t. given specifications and pre/postconditions
-transformProgram :: Options -> [(QName,Int)]-> [CFuncDecl]
+transformProgram :: Int -> Options -> [(QName,Int)]-> [CFuncDecl]
                  -> ProgInfo Deterministic -> [CFuncDecl]
-                 -> [CFuncDecl] -> [CFuncDecl] -> CurryProg -> CurryProg
-transformProgram opts funposs allfdecls detinfo specdecls predecls postdecls
-  (CurryProg mname imps dfltdecl clsdecls instdecls tdecls orgfdecls opdecls) =
- let -- replace in program old postconditions by new simplified postconditions:
-     fdecls = filter (\fd -> funcName fd `notElem` map funcName postdecls)
-                     orgfdecls ++ postdecls
-     newpostconds = concatMap
-                      (genPostCond4Spec opts allfdecls detinfo postdecls)
-                      specdecls
-     newfunnames  = map (snd . funcName) newpostconds
-     -- remove old postconditions which are transformed into postconditions
-     -- with specification checking:
-     wonewfuns    = filter (\fd -> snd (funcName fd) `notElem` newfunnames)
-                           fdecls
-     -- compute postconditions actually used for contract checking:
-     contractpcs  = postdecls++newpostconds
-  in CurryProg mname
-               (nub ("Test.Contract":"Control.SetFunctions":imps))
-               dfltdecl clsdecls instdecls tdecls
-               (map deleteCmtIfEmpty
-                  (concatMap
-                     (addContract opts funposs allfdecls predecls contractpcs)
-                     wonewfuns ++
-                   newpostconds))
-               opdecls
+                 -> [CFuncDecl] -> [CFuncDecl] -> CurryProg -> IO CurryProg
+transformProgram verb opts funposs allfdecls detinfo
+  specdecls predecls postdecls
+  (CurryProg mname imps dfltdecl clsdecls instdecls tdecls
+             orgfdecls opdecls) = do
+  let -- replace in program old postconditions by new simplified postconditions:
+      fdecls = filter (\fd -> funcName fd `notElem` map funcName postdecls)
+                      orgfdecls ++ postdecls
+      newpostconds = concatMap
+                       (genPostCond4Spec opts allfdecls detinfo postdecls)
+                       specdecls
+      newfunnames  = map (snd . funcName) newpostconds
+      -- remove old postconditions which are transformed into postconditions
+      -- with specification checking:
+      wonewfuns    = filter (\fd -> snd (funcName fd) `notElem` newfunnames)
+                            fdecls
+      -- compute postconditions actually used for contract checking:
+      contractpcs  = postdecls++newpostconds
+  unless (contractMod `elem` imps) $ compileImportedModule verb contractMod
+  unless (setFunMod `elem` imps) $ compileImportedModule verb setFunMod
+  return $ CurryProg
+    mname (nub (contractMod : setFunMod : imps))
+    dfltdecl clsdecls instdecls tdecls
+    (map deleteCmtIfEmpty
+        (concatMap (addContract opts funposs allfdecls predecls contractpcs)
+                   wonewfuns ++ newpostconds))
+    opdecls
 
 -- Add an empty comment to each function which has no comment
 addCmtFuncInProg :: CurryProg -> CurryProg
@@ -529,5 +534,13 @@ propModule = "Test.Prop"
 --- Name of the EasyCheck module.
 easyCheckModule :: String
 easyCheckModule = "Test.EasyCheck" 
+
+--- Name of the set functions module.
+setFunMod :: String
+setFunMod = "Control.SetFunctions"
+
+--- Name of the contract module.
+contractMod :: String
+contractMod = "Test.Contract"
 
 ------------------------------------------------------------------------
