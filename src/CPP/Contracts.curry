@@ -17,13 +17,12 @@
 module CPP.Contracts ( main, translateContracts )
   where
 
-import Char
-import Directory
-import Distribution      ( installDir )
-import FilePath          ( takeDirectory )
-import List
-import Maybe             ( fromJust, isNothing )
-import System
+import Data.Char
+import Language.Curry.Distribution      ( installDir )
+import System.Directory
+import System.FilePath                  ( takeDirectory )
+import Data.List
+import Data.Maybe                       ( fromJust, isNothing )
 
 import AbstractCurry.Types
 import AbstractCurry.Files

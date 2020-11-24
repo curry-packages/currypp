@@ -5,7 +5,7 @@
 module CPP.CompileWithFrontend
  where
 
-import Distribution ( curryCompiler )
+import Language.Curry.Distribution ( curryCompiler )
 
 import System.FrontendExec
 
