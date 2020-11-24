@@ -18,9 +18,10 @@ module SQLParserInfoType
   NullableFM, AttributesFM, AttrTypeFM)
 where
 
-import Data.Char (toLower)
-import Data.List (partition)
-import qualified Data.Map as Map
+import Data.Char ( toLower )
+import Data.List ( partition )
+
+import Data.Map
 
 --- Type synonyms for all parts of the parser information
 type RelationFM = Map.Map String (Map.Map String [(String, RelationType)])

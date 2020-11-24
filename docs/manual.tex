@@ -150,14 +150,15 @@ one can specify the desired format with foreign code marked by
 similarly to the \code{printf} statement of C,
 followed by a comma-separated list of arguments.
 This format specification is transformed into operations
-of the \CYS library \code{Format} so that it must be imported.
+of the library \code{Data.Format} (of package \code{printf})
+so that it must be imported.
 For instance, the following program defines an operation
 that formats a string, an integer (with leading sign and zeros),
 and a float with leading sign and precision 3:
 \begin{currynomath}
 {-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=foreigncode #-}
 
-import Format
+import Data.Format
 
 showSIF :: String -> Int -> Float -> String
 showSIF s i f = ``format "Name: %s | %+.5i | %+6.3f",s,i,f''
@@ -714,6 +715,20 @@ queens :: Int -> [Int]
 queens n = safe (permute [1..n])
 \end{curry}
 
+\paragraph{Important note:}
+The implementation of default rules is based on set functions
+(implemented by the module \code{Control.SetFunctions}).
+Therefore, the package \code{setfunctions} should be installed
+as a dependency.
+This can easily done by executing
+%
+\begin{curry}
+> cypm add setfunctions
+\end{curry}
+%
+before compiling a program containing default rules with the
+Curry preprocessor.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Contracts}
@@ -776,6 +791,22 @@ Postcondition of 'sort' (module Quicksort, line 27) violated for:
 
 ERROR: Execution aborted due to contract violation!
 \end{curry}
+
+\paragraph{Important note:}
+The implementation of default rules is based on set functions
+(implemented by the module \code{Control.SetFunctions}) and
+the auxiliary package to check contracts at run time.
+Therefore, the packages \code{setfunctions} and \code{contracts}
+should be installed as dependencies.
+This can easily done by executing
+%
+\begin{curry}
+> cypm add setfunctions
+> cypm add contracts
+\end{curry}
+%
+before compiling a program containing contracts with the
+Curry preprocessor.
 
 %  LocalWords:  preprocessor
 

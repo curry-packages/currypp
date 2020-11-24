@@ -19,9 +19,10 @@
 
 module SQLConsistency(checkConsistency) where
 
-import Data.Char (toLower, toUpper)
-import qualified Data.Map as Map
-import Data.List (delete)
+import Data.Char ( toLower, toUpper )
+import Data.List ( delete )
+
+import Data.Map
 
 import ParseTypes
 
@@ -84,7 +85,7 @@ checkDelete p relMap colMap cond (fm, tab) =
             (checkCondition p relMap colMap cond fm)
 
 -- ------------------------ select statement ------------------------------
--- During the checking of SelectHead-node a finiteMap is build up containing
+-- During the checking of SelectHead-node a Map is build up containing
 -- lists of column names with their corresponding table name as key. This map
 -- is passed to the functions which checks the order-by-clause.
 -- This is not the same map as contained in the parser info as it does just
@@ -102,7 +103,7 @@ checkSelect p relMap colMap selhead order fm =
                   chHead
                   (checkOrder p tabMap order)
 
--- First of all the finiteMap is build and then used to check the other
+-- First of all the Map is build and then used to check the other
 -- parts of the SelectHead-node.
 -- In case of a compound selectHead both parts are checked seperately in the
 -- same way and the FMs are combined afterwards (overwriting bindings in the
@@ -175,7 +176,7 @@ checkSelElem p fm _ _ (Aggregation fun sp col) =
         liftPM (\chCol -> (Aggregation fun sp chCol))
                (checkColumnRef p col fm)
 
--- Fills a FiniteMap with Column names and original notation
+-- Fills a Map with Column names and original notation
 -- for each table name referenced in the statement.
 -- The column names are fetched from the parser information module.
 checkTableRefs :: Pos ->
@@ -594,7 +595,7 @@ buildColRef nullMap tab col =
 
 -- Given a table all column names and the original notation of the table name
 -- are fetched from the parser info module and inserted into
--- a new finiteMap with the table name (small letters) as key.
+-- a new Map with the table name (small letters) as key.
 -- Throws an error if the table name is not defined. Generates warning
 -- if a different notation is used.
 checkTable :: Pos ->

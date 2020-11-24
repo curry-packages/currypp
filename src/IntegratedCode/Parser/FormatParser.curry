@@ -20,18 +20,18 @@
 --- For explanation on semantics see
 --- <http://pubs.opengroup.org/onlinepubs/009695399/functions/fprintf.html>
 ---
---- __For further informations see the Format library.
---- Not all parsable expressions are usable.__
+--- __For further informations see the library `Data.Format` of package
+--- `printf`. Not all parsable expressions are usable.__
 ---
 --- @author Jasper Sikorra (with changes by Michael Hanus)
---- @version November 2014
+--- @version December 2018
 ------------------------------------------------------------------------------
-module FormatParser(parse) where
+module FormatParser ( parse ) where
 
 import Parser
 import Data.Char
-import Numeric
-import AllSolutions
+
+import Control.AllSolutions ( getOneSolution )
 
 import ParseTypes
 
@@ -68,9 +68,9 @@ isVarStartLetter c = c /= ','
 isVarInnerLetter :: Char -> Bool
 isVarInnerLetter c = c /= ','
 
---- Map each type on a function in the Format library
+--- Map each type to a function in the `Data.Format` library
 mapTypes :: Char -> String
-mapTypes c = "Format." ++ case c of
+mapTypes c = "Data.Format." ++ case c of
   'c' -> "showChar"
   'd' -> "showInt"
   'i' -> "showInt"
@@ -86,12 +86,12 @@ mapTypes c = "Format." ++ case c of
   _   -> error "mapTypes: unknown character"
 
 --- The function parses and converts a String that is in the format of a C-like
---- printf expression into a Curry Expression that makes use of the Format
---- library.
+--- printf expression into a Curry Expression that makes use of the
+--- `Data.Format` library.
 --- @param showfun - The operation to be applied to the formatted string result
 --- @param pos - The position of the expression in the original file
 --- @param exp - The expression which should be converted
---- @return A String in Curry Syntax matching exp using the Format
+--- @return A String in Curry Syntax matching exp using the `Data.Format`
 ---         library
 parse :: String -> LangParser
 parse showfun p s = do

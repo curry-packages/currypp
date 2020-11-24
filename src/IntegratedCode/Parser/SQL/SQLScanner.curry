@@ -5,11 +5,11 @@
 
 module SQLScanner(scan) where
 
-import Data.Char    (isDigit, isAlpha, isAlphaNum, toLower)
-import Data.List    (splitOn)
-import Data.Time
-import qualified Data.Map as Map
+import Data.Char (isDigit, isAlpha, isAlphaNum, toLower)
+import Data.List (splitOn)
 import ReadShowTerm (readsQTerm)
+
+import Data.Map
 
 import SQLToken
 

@@ -1,19 +1,9 @@
-The Curry Preprocessor
-======================
+--------------------------------------------------------------
+A translater from Curry with Integrated Code to standard Curry  
+--------------------------------------------------------------
 
-This repository contains the implementation of the
-Curry preprocessor `currypp` which supports some
-extensions for Curry programs, like
-
-* Integrated code, i.e., the integration of code
-  written in some other language into Curry programs,
-  like regular expressions, format specifications (`printf`),
-  HTML and XML code,
-* default rules,
-* contracts.
-
-Details about the usage can be found in the manual.
-Here is a short summary of the usage of integrated code.
+Authors: Max Deppert - made@informatik.uni-kiel.de
+         Jasper Sikorra - jsi@informatik.uni-kiel.de
 
 
 General usage of the code integrator:

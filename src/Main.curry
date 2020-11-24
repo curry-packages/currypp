@@ -7,30 +7,29 @@
 --- is supported (option `foreigncode`, see module `Translator`).
 ---
 --- @author Michael Hanus
---- @version January 2018
+--- @version October 2019
 ------------------------------------------------------------------------------
+
+import Data.Char            ( isDigit, digitToInt, isSpace )
+import Data.List
+import System.Directory     ( copyFile, renameFile )
+import System.FilePath
+import System
 
 import AbstractCurry.Types
 import AbstractCurry.Files
-import AbstractCurry.Pretty (showCProg)
-import AbstractCurry.Select (progName)
-import System.Directory     (copyFile,renameFile)
-import System.Process
-import System.CPUTime
-import System.Environment
-import System.FilePath
-import Data.List
-import Data.Char            (isDigit,digitToInt,isSpace)
-import Distribution
+import AbstractCurry.Pretty ( showCProg )
+import AbstractCurry.Select ( progName )
+import System.CurryPath     ( stripCurrySuffix )
 
-import TransICode           (translateIntCode)
-import TransDefRules        (transDefaultRules)
-import TransContracts       (transContracts)
+import CPP.DefaultRules     ( translateDefaultRulesAndDetOps )
+import CPP.Contracts        ( translateContracts )
+import TransICode           ( translateIntCode )
 
 cppBanner :: String
 cppBanner = unlines [bannerLine,bannerText,bannerLine]
  where
-   bannerText = "Curry Preprocessor (version of 09/01/2018)"
+   bannerText = "Curry Preprocessor (version of 11/10/2019)"
    bannerLine = take (length bannerText) (repeat '=')
 
 --- Preprocessor targets, i.e., kind of entities to be preprocessed:
@@ -90,6 +89,7 @@ main = do
                   putStrLn "TRANSFORMED PROGRAM:"
                   putStrLn "===================="
                   readFile outFile >>= putStrLn
+                  putStrLn "--------------------"
              )
              (processOptions initOpts options)
     _ -> maybe (showUsage args)
@@ -220,18 +220,19 @@ callPreprocessors opts optlines modname srcprog orgfile
   = do -- specific handling since DefaultRules requires and process
        -- untyped Curry but Contracts requires typed Curry:
        mbdefprog <- readUntypedCurry modname >>=
-                    transDefaultRules verb defopts srcprog
+                    translateDefaultRulesAndDetOps verb defopts srcprog
        let newsrcprog = maybe srcprog showCProg mbdefprog
        if Contracts `elem` pptargets
         then do
           maybe done
                 (\defprog -> writeFile orgfile (optlines ++ showCProg defprog))
                 mbdefprog
-          readCurry modname >>= transContracts verb contopts srcprog
+          readCurry modname >>= translateContracts verb contopts modname
+                                                   srcprog 
                             >>= return . maybe newsrcprog showCProg
         else return newsrcprog
   | Contracts `elem` pptargets
-  = readCurry modname >>= transContracts verb contopts srcprog
+  = readCurry modname >>= translateContracts verb contopts modname srcprog
                       >>= return . maybe srcprog showCProg
   | otherwise
   = error "currypp internal error during dispatching"

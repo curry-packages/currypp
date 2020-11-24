@@ -1,5 +1,5 @@
 --- This module defines a Symboltable optimized for the SQLNamer.
---- It contains two FiniteMaps, both using strings as keys and <
+--- It contains two Maps, both using strings as keys and <
 --- as comparison operation. It is parameterized over both value types.
 --- Only the first Map is supporting a scope concept.
 ---@author Julia Krone
@@ -8,9 +8,9 @@
 
 module Symboltab where
 
-import qualified Data.Map as Map
+import Data.Map 
 
---- A Symboltable consists of at least one pair of FiniteMaps.
+--- A Symboltable consists of at least one pair of Maps.
 --- There can be another table representing a surrounding scope.
 data Symboltable a b = ST ((Map.Map String a),(Map.Map String b))
                           (Maybe (Symboltable a b))

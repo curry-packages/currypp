@@ -20,10 +20,11 @@
 
 module SQLTyper(checkTypes) where
 
-import Data.Char (toLower, toUpper)
-import Data.List (isInfixOf)
+import Data.Char ( toLower, toUpper )
+import Data.List ( isInfixOf )
 import Data.Time
-import qualified Data.Map as Map
+
+import Data.Map
 
 import ParseTypes
 
