@@ -8,7 +8,7 @@
 import HTML.Base
 import Test.Prop
 
-htmlTest1 :: String -> [HtmlExp]
+htmlTest1 :: String -> [BaseHtml]
 htmlTest1 name = ``html
  <html>
 
@@ -23,29 +23,30 @@ htmlTest1 name = ``html
    <h2>{reverse name}
    Bye!''
 
-htmlDoc1 :: [HtmlExp]
+htmlDoc1 :: [BaseHtml]
 htmlDoc1 =
-  [HtmlStruct "html" []
-    [HtmlStruct "head" []
-      [HtmlStruct "title" [] [HtmlText "Simple Test\n"]],
-     HtmlStruct "body" []
-      [HtmlStruct "h1" []
-        [HtmlText "Hello ", HtmlText "Joe", HtmlText "!"],
-       HtmlStruct "p" [] [HtmlText "Bye!\n"],
-       HtmlStruct "p" [] [HtmlText "Bye!\n"],
-       HtmlStruct "h2" []
-        [HtmlText "eoJ", HtmlText "\n"],
-       HtmlText "Bye!"]]]
+  [htmlStruct "html" []
+    [htmlStruct "head" []
+      [htmlStruct "title" [] [htmlText "Simple Test\n"]],
+     htmlStruct "body" []
+      [htmlStruct "h1" []
+        [htmlText "Hello ", htmlText "Joe", htmlText "!"],
+       htmlStruct "p" [] [htmlText "Bye!\n"],
+       htmlStruct "p" [] [htmlText "Bye!\n"],
+       htmlStruct "h2" []
+        [htmlText "eoJ", htmlText "\n"],
+       htmlText "Bye!"]]]
 
 ------------------------------------------------------------------------------
 -- Partial equality on HTML documents for testing.
-instance Eq HtmlExp where
+instance Eq BaseHtml where
   hexp1 == hexp2 = case (hexp1,hexp2) of
-    (HtmlText s, HtmlText t) -> s == t
-    (HtmlStruct t ats hes, HtmlStruct t' ats' hes') ->
+    (BaseText s, BaseText t) -> s == t
+    (BaseStruct t ats hes, BaseStruct t' ats' hes') ->
                                         t==t' && ats==ats' && hes == hes'
-    _ -> error "HTML.==: cannot compare cgi refs or handlers"
+    _ -> error "BaseHTML.==: cannot compare actions"
 
 ------------------------------------------------------------------------------
 
+test_Html_code :: Prop
 test_Html_code = always (htmlTest1 "Joe" == htmlDoc1)

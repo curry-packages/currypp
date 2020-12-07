@@ -43,11 +43,11 @@ translateHTML start input =
   showTree :: Tree -> String
   showTree (Tree (Content ds) _) = intercalate "," (map showCont ds)
   showTree (Tree (Element a par) ys) =
-    "HtmlStruct " ++ show a ++ " " ++ showAttrs par ++ " "
-           ++ showStringList (map showTree ys)
+    "htmlStruct " ++ show a ++ " " ++ showAttrs par ++ " "
+                  ++ showStringList (map showTree ys)
            
   showCont :: Text -> String
-  showCont (Raw  s) = "HtmlText " ++ show s ++ ""
+  showCont (Raw  s) = "htmlText " ++ show s ++ ""
   showCont (ExpT s) = "htxt (" ++ s ++ ")"
   showCont (ExpC s) = "(" ++ s ++ ")"
 

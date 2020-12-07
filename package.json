@@ -19,7 +19,7 @@
         "fl-parser"     : ">= 1.0.0",
         "flatcurry"     : ">= 2.0.0",
         "frontend-exec" : ">= 0.0.1",
-        "html"          : ">= 2.0.0, < 3.0.0",
+        "html2"         : ">= 1.0.0",
         "printf"        : ">= 0.0.1",
         "regexp"        : ">= 1.1.0",
         "searchtree"    : ">= 0.0.1",
