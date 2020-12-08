@@ -5,7 +5,8 @@
 module CPP.CompileWithFrontend
  where
 
-import Language.Curry.Distribution ( curryCompiler )
+import Control.Monad               ( when )
+import Curry.Compiler.Distribution ( curryCompiler )
 
 import System.FrontendExec
 
@@ -32,7 +33,7 @@ compileImportedModule verb modname = do
 compileModuleTo :: Int -> String -> FrontendTarget -> IO ()
 compileModuleTo verb modname target = do
   when (verb > 2) $ putStrLn $
-    "Compiling '" ++ modname ++ "' to '" ++ showFrontendTarget target ++ "'..."
+    "Compiling '" ++ modname ++ "' to '" ++ show target ++ "'..."
   callFrontendWithParams target (setQuiet True defaultParams) modname
 
 ------------------------------------------------------------------------------

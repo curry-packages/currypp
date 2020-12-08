@@ -79,7 +79,7 @@ parserL1 p s = parserL1Iter "" p p s
 
 parserL1Iter :: String -> Pos -> Pos -> String -> PM [L1Token]
 parserL1Iter acc accP _ "" =
-  cleanPM (if_then_else (null acc) [] [Normal accP (reverse acc)])
+  cleanPM (ifThenElse (null acc) [] [Normal accP (reverse acc)])
 parserL1Iter acc accP p s@(c:cs)
   -- Parse Quotations
   | c == '\"' = passThrough parseQuotation (movePosByChar p '\"') cs
