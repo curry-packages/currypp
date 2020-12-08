@@ -11,17 +11,18 @@ import HTML.Base
 Remark:
 
 The integrated code ``html ...'' expands to a list of HTML expressions,
-i.e., to an expression of type [HtmlExp].
+i.e., to an expression of type `[a]` where `a` is an instance of class `HTML`.
 
 A Curry expression enclosed with {...} inside the integrated code
 must be of type String and is inserted as (HTML-quoted) text.
 
 A Curry expression enclosed with {{...}} inside the integrated code
-must be of type HtmlExp and is inserted as an HTML element.
+must be of type `a`, where `a` is an instance of class `HTML`,
+and is inserted as an HTML element.
 -}
 
 test1 :: String -> IO ()
-test1 name = putStrLn $ showHtmlExps ``html
+test1 name = putStrLn $ showBaseHtmls ``html
  <html>
 
   <head>
