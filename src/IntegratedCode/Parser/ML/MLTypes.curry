@@ -7,7 +7,7 @@
 module MLTypes where
 
 import ParseTypes
-import Char
+import Data.Char
 
 data L = X | H
 

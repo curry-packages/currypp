@@ -7,8 +7,8 @@
 ------------------------------------------------------------------------------
 module CIParser(parse) where
 
-import List
-import Char
+import Data.List
+import Data.Char
 
 import ParseTypes
 

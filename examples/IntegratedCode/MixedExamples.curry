@@ -35,4 +35,3 @@ printFl f = ``printf "% 20.4f\n",f''
 printEl :: Float -> IO ()
 printEl f = do ``printf "%+20.3E",f'' >> putStr " meters\n"
                putStrLn "DONE!"
-

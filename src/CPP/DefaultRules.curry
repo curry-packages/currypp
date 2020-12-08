@@ -42,9 +42,9 @@
 module CPP.DefaultRules ( translateDefaultRulesAndDetOps )
  where
 
-import Distribution ( curryCompiler )
-import FilePath     ( takeDirectory )
-import List         ( partition )
+import Language.Curry.Distribution ( curryCompiler )
+import System.FilePath             ( takeDirectory )
+import Data.List                   ( partition )
 
 import AbstractCurry.Types
 import AbstractCurry.Files
@@ -366,7 +366,7 @@ transDefaultRule condfunname ar (CRule pats (CSimpleRhs exp locals)) =
                              (CSymbol condfunname : args)]
 
   (newpats,args) = unzip (map arg2patexp (zip [1001..] pats))
-  
+
   arg2patexp (i,pat) = case pat of
     CPVar v     -> if snd v=="_"
                      then let newvar = (i,"patvar_"++show i)
@@ -375,7 +375,7 @@ transDefaultRule condfunname ar (CRule pats (CSimpleRhs exp locals)) =
     CPAs asv _  -> (pat, CVar asv)
     _           -> let newvar = (i,"patvar_"++show i)
                     in (CPAs newvar pat, CVar newvar)
-  
+
 ------------------------------------------------------------------------
 
 preUnit :: CExpr

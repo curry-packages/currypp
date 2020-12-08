@@ -6,7 +6,7 @@
 ---     "(Specifier|NonSpecifier)*"(,Var)*
 ---
 --- where `Var` can be any string without a comma.
---- 
+---
 --- A specifier is in the form
 ---
 ---     %[flags] [width] [.precision] type
@@ -29,8 +29,7 @@
 module FormatParser ( parse ) where
 
 import Parser
-import Char
-import ReadNumeric
+import Data.Char
 
 import Control.AllSolutions ( getOneSolution )
 
@@ -144,13 +143,13 @@ addVarsToSpecifiers po ((Left x):xs) []   =
 addVarsToSpecifiers po (q:qs) varis@(v:vs) = case q of
   (Left stri)             -> liftPM ((:) (Left stri))
                                    (addVarsToSpecifiers po qs varis)
-  (Right (Spec f w p t)) -> if (isStar w)
+  (Right (Spec f w p t)) -> if isStar w
       then
-        let iv = Just (Left (fst $ maybe failed id $ readNat v))
+        let iv = Just (Left (extractNat v))
         in addVarsToSpecifiers po (Right (Spec f iv p t):qs) vs
-      else if (isStar p)
+      else if isStar p
         then
-          let iv = Just (Left (fst $ maybe failed id $ readNat v))
+          let iv = Just (Left (extractNat v))
           in  addVarsToSpecifiers po (Right (Spec f w iv t):qs) vs
         else liftPM ((:) (Right (SpecV f (eE w) (eE p) t v)))
                     (addVarsToSpecifiers po qs vs)
@@ -247,4 +246,6 @@ varInner :: Char -> String -> String
 varInner     = satisfy (\c -> isVarInnerLetter c) i                             >>> i                        where i free
 
 extractNat :: String -> Int
-extractNat s = maybe failed (fst . id) (readNat s)
+extractNat s = case readNat s of
+  [(v,_)] -> v
+  _       -> failed

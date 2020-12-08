@@ -2,7 +2,7 @@
 --- To provide the tranformation of SQL-statements it calls in this order:
 --- Scanner
 --- Parser
---- Consistency check 
+--- Consistency check
 --- Type check
 --- Translator (to functions of CDBI interface)
 --- Reads the .info file which contains information about the data model and
@@ -15,8 +15,8 @@
 module SQLConverter(parseSQL, readParserInfo, ParserInfo) where
 
 
-import IO(openFile, IOMode(..), hGetContents)
-import ReadShowTerm(readsQTerm)
+import System.IO    (openFile, IOMode(..), hGetContents)
+import ReadShowTerm (readsQTerm)
 
 import ParseTypes
 
@@ -37,15 +37,15 @@ import SQLTyper
 --- @param code - the SQL-request as string
 --- @return A String in Curry-Syntax (CDBI-functions).
 parseSQL :: Bool -> Either String ParserInfo -> LangParser
-parseSQL withrundb parserInfo pos code = 
+parseSQL withrundb parserInfo pos code =
    case parserInfo of
          Left err -> return (throwPM pos err)
-         Right pi -> processCompilation withrundb pi pos code 
-  
+         Right pi -> processCompilation withrundb pi pos code
+
 --- Reader for parser information file.
 --- @param verb - verbosity level
 --- @param filename - path/name of the .info file
---- @return either an error message or the parser information 
+--- @return either an error message or the parser information
 readParserInfo :: Int -> String -> IO (Either String ParserInfo)
 readParserInfo verb filename = do
   when (verb > 0) $ putStrLn $
@@ -55,8 +55,8 @@ readParserInfo verb filename = do
   case readsQTerm contents of
     []        -> return (Left "ParserInfo file not found or corrupted.")
     ((a,_):_) -> return (Right a)
- 
--- auxiliary function to check Result after each stage 
+
+-- auxiliary function to check Result after each stage
 checkResult :: PM a -> Either (PM String) (PM a)
 checkResult (WM (Errors err) ws) = Left (WM (throwPR err) ws)
 checkResult pm@(WM (OK _ ) _)    = Right pm
@@ -83,14 +83,12 @@ processCompilation withrundb parserInfo pos code =
                      Left pm -> return pm
                      Right _ -> callTyper consCheckedCode
          callTyper res =
-          let typeCheckedCode = checkTypes res 
+          let typeCheckedCode = checkTypes res
                                            (getTypes parserInfo)
                                             pos
            in case checkResult typeCheckedCode of
                      Left pm -> return pm
-                     Right _ -> return (translate typeCheckedCode 
+                     Right _ -> return (translate typeCheckedCode
                                                   withrundb
                                                   (cdbiModule parserInfo)
                                                   pos)
-
-         

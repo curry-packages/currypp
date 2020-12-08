@@ -11,7 +11,7 @@ import ParseTypes
 import MLParser
 import MLTypes
 
-import List
+import Data.List
 
 showText :: Text -> String
 showText (Raw  s) = show (dropTrailingCR s)
@@ -58,7 +58,7 @@ translateXML start input =
   return $ (warnOKPM (showStringList (map showTree trees)) ws)
  where
   (trees,ws) = parse X input (toSimplePos start,0)
-  
+
   showTree :: Tree -> String
   showTree (Tree (Content ds) _) =
     if any isExpC ds
@@ -70,13 +70,13 @@ translateXML start input =
 
   isExpC t = case t of ExpC _ -> True
                        _      -> False
-                       
+
   showCont :: Text -> String
   showCont (Raw  s) = "XText " ++ show (dropTrailingCR s) ++ ""
   showCont (ExpT s) = "xtxt (" ++ dropTrailingCR s ++ ")"
   showCont (ExpC s) = "(" ++ dropTrailingCR s ++ ")"
 
--- 
+--
 showStringList :: [String] -> String
 showStringList xs = "[" ++ (intercalate "," xs) ++ "]"
 

@@ -4,7 +4,7 @@ import Test.Prop
 
 -- Example: predicate to check for float strings
 
-import Char(isDigit)
+import Data.Char (isDigit)
 
 -- Is the argument a non-negative float string (without exponent)?
 isNNFloat :: String -> Bool
@@ -15,4 +15,3 @@ main = map isNNFloat ["3.14","314"]
 
 test1 = isNNFloat "3.14" -=- True
 test2 = isNNFloat "314"  -=- False
-

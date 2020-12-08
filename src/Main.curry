@@ -10,10 +10,10 @@
 --- @version October 2019
 ------------------------------------------------------------------------------
 
-import Char                 ( isDigit, digitToInt, isSpace )
-import Directory            ( copyFile, renameFile )
-import FilePath
-import List
+import Data.Char            ( isDigit, digitToInt, isSpace )
+import Data.List
+import System.Directory     ( copyFile, renameFile )
+import System.FilePath
 import System
 
 import AbstractCurry.Types
@@ -46,7 +46,7 @@ parseTarget t | t=="foreigncode"  = Just ForeignCode
 data PPOpts =
   PPOpts { optHelp      :: Bool
          , optSave      :: Bool       -- save the transformed program?
-         , optVerb      :: Int        -- verbosity 
+         , optVerb      :: Int        -- verbosity
          , optTgts      :: [PPTarget] -- targets of the preprocessor
          , optModel     :: String     -- model for the SQL preprocessor
          , optDefRules  :: [String]   -- options for DefaultRules
@@ -62,7 +62,7 @@ initOpts = PPOpts { optHelp      = False
                   , optDefRules  = []
                   , optContracts = []
                   }
-                  
+
 --- The main function of the Curry Preprocessor.
 main :: IO ()
 main = do
@@ -74,7 +74,7 @@ main = do
                if optHelp opts
                then putStrLn (cppBanner ++ usageText) >> exitWith 1
                else do
-                cpath <- getEnviron "CURRYPATH"
+                cpath <- getEnv "CURRYPATH"
                 let modname = pathToModName cpath orgSourceFile
                 when (optVerb opts > 1) $ putStr cppBanner
                 when (optVerb opts > 2) $ putStr $ unlines
@@ -114,7 +114,7 @@ processOptions opts optargs = case optargs of
                          then processOptions opts { optVerb = digitToInt vl } os
                          else Nothing
     (('-':'-':ts):os) -> if isPrefixOf "model:" ts
-                         then processOptions 
+                         then processOptions
                                 opts {optModel = tail (dropWhile (/=':') ts) }
                                 os
                          else Nothing

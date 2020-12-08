@@ -17,13 +17,12 @@
 module CPP.Contracts ( main, translateContracts )
   where
 
-import Char
-import Directory
-import Distribution      ( installDir )
-import FilePath          ( takeDirectory )
-import List
-import Maybe             ( fromJust, isNothing )
-import System
+import Data.Char
+import Language.Curry.Distribution      ( installDir )
+import System.Directory
+import System.FilePath                  ( takeDirectory )
+import Data.List
+import Data.Maybe                       ( fromJust, isNothing )
 
 import AbstractCurry.Types
 import AbstractCurry.Files
@@ -393,11 +392,11 @@ addContract opts funposs allfdecls predecls postdecls
                 addCmtLine "Without precondition checking!" $
                            rnmFDecl rename fdecl))
           (find (\fd -> fromPreCondName (snd (funcName fd)) == f) predecls)
-              
+
      -- Construct function with postcond. added and a function without postc.:
      (postcheck,wopostfdecl) =
         maybe ([],woprefdecl)
-          (\postdecl -> 
+          (\postdecl ->
             let postname = funcName postdecl
                 qnp      = funcName woprefdecl
                 rename   = updateFunc id qnp
@@ -529,11 +528,11 @@ renameProp2EasyCheck prog =
 
 --- Name of the Test.Prop module (the clone of the EasyCheck module).
 propModule :: String
-propModule = "Test.Prop" 
+propModule = "Test.Prop"
 
 --- Name of the EasyCheck module.
 easyCheckModule :: String
-easyCheckModule = "Test.EasyCheck" 
+easyCheckModule = "Test.EasyCheck"
 
 --- Name of the set functions module.
 setFunMod :: String

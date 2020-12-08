@@ -25,5 +25,3 @@ sort'post xs ys = length xs == length ys
 sort7 = sort (map showInt [7,1,6,3,5,4,2]) -=- map (\d -> "+00"++show d) [1..7]
 
 sortEmpty = toError (sort ([] :: [Int]))
-
-
