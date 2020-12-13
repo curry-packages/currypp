@@ -10,17 +10,20 @@
 --- @version October 2019
 ------------------------------------------------------------------------------
 
+import Control.Monad        ( when )
 import Data.Char            ( isDigit, digitToInt, isSpace )
 import Data.List
 import System.Directory     ( copyFile, renameFile )
 import System.FilePath
-import System
 
 import AbstractCurry.Types
 import AbstractCurry.Files
 import AbstractCurry.Pretty ( showCProg )
 import AbstractCurry.Select ( progName )
 import System.CurryPath     ( stripCurrySuffix )
+import System.CPUTime       ( getCPUTime )
+import System.Environment   ( getEnv, getArgs )
+import System.Process       ( exitWith )
 
 import CPP.DefaultRules     ( translateDefaultRulesAndDetOps )
 import CPP.Contracts        ( translateContracts )

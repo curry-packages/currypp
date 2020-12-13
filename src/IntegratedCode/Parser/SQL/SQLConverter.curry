@@ -15,6 +15,7 @@
 module SQLConverter(parseSQL, readParserInfo, ParserInfo) where
 
 
+import Control.Monad (when)
 import System.IO    (openFile, IOMode(..), hGetContents)
 import ReadShowTerm (readsQTerm)
 

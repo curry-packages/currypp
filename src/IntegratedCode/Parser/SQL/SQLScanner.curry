@@ -7,6 +7,7 @@ module SQLScanner(scan) where
 
 import Data.Char (isDigit, isAlpha, isAlphaNum, toLower)
 import Data.List (splitOn)
+import Data.Time (CalendarTime (..))
 import ReadShowTerm (readsQTerm)
 
 import qualified Data.Map as Map
