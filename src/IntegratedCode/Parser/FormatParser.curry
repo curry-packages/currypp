@@ -28,8 +28,11 @@
 ------------------------------------------------------------------------------
 module FormatParser ( parse ) where
 
+import Prelude hiding       ( empty, (<*>) )
+
 import Parser
 import Data.Char
+import Numeric              ( readNat )
 
 import Control.AllSolutions ( getOneSolution )
 
