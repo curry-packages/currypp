@@ -42,6 +42,7 @@
 module CPP.DefaultRules ( translateDefaultRulesAndDetOps )
  where
 
+import Control.Monad               ( when, unless )
 import Language.Curry.Distribution ( curryCompiler )
 import System.FilePath             ( takeDirectory )
 import Data.List                   ( partition )
@@ -137,7 +138,7 @@ printProofObligation :: [QName] -> IO ()
 printProofObligation qfs = unless (null qfs) $ do
   putStrLn line
   putStrLn "PROOF OBLIGATIONS:"
-  mapIO_ (\qn -> putStrLn $ showQName qn ++" is a deterministic operation.") qfs
+  mapM_ (\qn -> putStrLn $ showQName qn ++" is a deterministic operation.") qfs
   putStrLn line
  where
   line = take 70 (repeat '=')

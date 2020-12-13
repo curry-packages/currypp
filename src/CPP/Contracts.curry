@@ -36,7 +36,9 @@ import Contract.Usage   ( checkContractUsage )
 import FlatCurry.Files  ( readFlatCurry )
 import qualified FlatCurry.Goodies as FCG
 import System.CurryPath ( lookupModuleSourceInLoadPath, modNameToPath
-                        , stripCurrySuffix)
+                        , stripCurrySuffix )
+import System.Environment ( getArgs )
+import System.Process   ( system )
 
 -- in order to use the determinism analysis:
 import Analysis.ProgInfo      ( ProgInfo, lookupProgInfo )
