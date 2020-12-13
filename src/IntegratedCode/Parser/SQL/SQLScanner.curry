@@ -9,7 +9,7 @@ import Data.Char (isDigit, isAlpha, isAlphaNum, toLower)
 import Data.List (splitOn)
 import ReadShowTerm (readsQTerm)
 
-import Data.Map
+import qualified Data.Map as Map
 
 import SQLToken
 

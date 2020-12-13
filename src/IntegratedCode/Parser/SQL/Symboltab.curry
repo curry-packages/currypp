@@ -8,7 +8,7 @@
 
 module Symboltab where
 
-import Data.Map 
+import qualified Data.Map as Map 
 
 --- A Symboltable consists of at least one pair of Maps.
 --- There can be another table representing a surrounding scope.

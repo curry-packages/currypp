@@ -22,7 +22,7 @@ module SQLConsistency(checkConsistency) where
 import Data.Char ( toLower, toUpper )
 import Data.List ( delete )
 
-import Data.Map
+import qualified Data.Map as Map
 
 import ParseTypes
 
