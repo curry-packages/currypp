@@ -17,6 +17,7 @@
 module CPP.Contracts ( main, translateContracts )
   where
 
+import Control.Monad                    ( when, unless )
 import Data.Char
 import Language.Curry.Distribution      ( installDir )
 import System.Directory
@@ -132,9 +133,9 @@ transformStandalone opts modname outfile = do
                             "Source code of module '"++modname++"' not found!"
                Just (_,progname) -> readFile progname
   let acyfile = abstractCurryFileName modname
-  doesFileExist acyfile >>= \b -> if b then removeFile acyfile else done
+  doesFileExist acyfile >>= \b -> if b then removeFile acyfile else return ()
   prog <- readCurry modname
-  doesFileExist acyfile >>= \b -> if b then done
+  doesFileExist acyfile >>= \b -> if b then return ()
                                        else error "Source program incorrect"
   let outmodname = transformedModName modname
   newprog <- transformCProg 1 opts modname srcprog prog outmodname
@@ -151,7 +152,7 @@ loadIntoCurry :: String -> IO ()
 loadIntoCurry m = do
   putStrLn $ "\nStarting Curry system and loading module '"++m++"'..."
   system $ installDir++"/bin/curry :l "++m
-  done
+  return ()
 
 ------------------------------------------------------------------------
 --- The main transformation operation with parameters:

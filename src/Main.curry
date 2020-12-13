@@ -224,7 +224,7 @@ callPreprocessors opts optlines modname srcprog orgfile
        let newsrcprog = maybe srcprog showCProg mbdefprog
        if Contracts `elem` pptargets
         then do
-          maybe done
+          maybe (return ())
                 (\defprog -> writeFile orgfile (optlines ++ showCProg defprog))
                 mbdefprog
           readCurry modname >>= translateContracts verb contopts modname
