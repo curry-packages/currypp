@@ -24,7 +24,7 @@ import Data.Char ( toLower, toUpper )
 import Data.List ( isInfixOf )
 import Data.Time
 
-import Data.Map
+import qualified Data.Map as Map
 
 import ParseTypes
 

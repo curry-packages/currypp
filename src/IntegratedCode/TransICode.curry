@@ -70,9 +70,9 @@ parsers = maybe iden pars
         "format"    -> FormatParser.parse ""       p
         "printf"    -> FormatParser.parse "putStr" p
         "regex"     -> RegexParser.parse p
-        "html"      -> liftIO (mapWarnsPM (addRealFname (getFilename p))) .
+        "html"      -> fmap (mapWarnsPM (addRealFname (getFilename p))) .
                                MLTranslate.translate l p
-        "xml"       -> liftIO (mapWarnsPM (addRealFname (getFilename p))) .
+        "xml"       -> fmap (mapWarnsPM (addRealFname (getFilename p))) .
                                MLTranslate.translate l p
         _           -> (\_ -> return $ throwPM p ("Bad langtag: " ++ l))
 
@@ -242,7 +242,7 @@ applyLangParsers :: Either String ParserInfo
                  -> IO (PM [StandardToken])
 applyLangParsers model iotks = do
   prtks <- iotks
-  prpr <- swapIOPM (liftPM (mapIO (applyLangParser model)) prtks)
+  prpr <- swapIOPM (liftPM (mapM (applyLangParser model)) prtks)
   return (crumplePM (liftPM (\prpt -> sequencePM prpt) prpr))
 
 --- Select the right translator and apply it to a single StandardToken

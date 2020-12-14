@@ -21,7 +21,7 @@ where
 import Data.Char ( toLower )
 import Data.List ( partition )
 
-import Data.Map
+import qualified Data.Map as Map
 
 --- Type synonyms for all parts of the parser information
 type RelationFM = Map.Map String (Map.Map String [(String, RelationType)])
