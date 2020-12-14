@@ -36,15 +36,14 @@
 --- see the example programs in the directory `examples/DefaultRules`).
 ---
 --- @author Michael Hanus
---- @version October 2019
+--- @version December 2020
 -----------------------------------------------------------------------------
 
 module CPP.DefaultRules ( translateDefaultRulesAndDetOps )
  where
 
 import Control.Monad               ( when, unless )
-import Language.Curry.Distribution ( curryCompiler )
-import System.FilePath             ( takeDirectory )
+import Curry.Compiler.Distribution ( curryCompiler )
 import Data.List                   ( partition )
 
 import AbstractCurry.Types
@@ -54,6 +53,7 @@ import AbstractCurry.Build
 import AbstractCurry.Pretty
 import DefaultRuleUsage
 import System.CurryPath ( modNameToPath )
+import System.FilePath  ( takeDirectory )
 import TheoremUsage     ( determinismTheoremFor, existsProofFor
                         , getModuleProofFiles, isProofFileNameFor )
 

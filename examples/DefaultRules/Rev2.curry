@@ -4,7 +4,7 @@
 import Test.Prop
 
 -- Reverse a list if it has exactly two elements:
-rev2 :: [a] -> [a]
+rev2 :: Data a => [a] -> [a]
 rev2 [x,y] = [y,x]
 rev2'default xs = xs
 

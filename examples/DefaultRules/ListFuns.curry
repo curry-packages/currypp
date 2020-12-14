@@ -7,7 +7,7 @@ import Test.Prop
 -- they do not work on infinite lists due to restrictions on set functions.
 
 -- take with default rule:
-take :: Int -> [a] -> [a]
+take :: Data a => Int -> [a] -> [a]
 take n (x:xs) | n>0 = x : take (n-1) xs
 take'default _ _ = []
 
@@ -19,7 +19,7 @@ takeTest3 = take 3 [1,2]   -=-  [1,2]
 
 
 -- zip3 with default rule (slight disadvantage: stricter than Prelude.zip3):
-zip3 :: [a] -> [b] -> [c] -> [(a,b,c)]
+zip3 :: (Data a, Data b, Data c) => [a] -> [b] -> [c] -> [(a,b,c)]
 zip3 (x:xs) (y:ys) (z:zs) = (x,y,z) : zip3 xs ys zs
 zip3'default _ _ _ = []
 

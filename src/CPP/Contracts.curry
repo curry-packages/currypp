@@ -11,19 +11,18 @@
 --- > Declarative Languages (PADL 2012), pp. 33-47, Springer LNCS 7149, 2012
 ---
 --- @author Michael Hanus
---- @version April 2019
+--- @version December 2020
 ------------------------------------------------------------------------
 
 module CPP.Contracts ( main, translateContracts )
   where
 
-import Control.Monad                    ( when, unless )
+import Control.Monad                 ( when, unless )
+import Curry.Compiler.Distribution   ( installDir )
 import Data.Char
-import Language.Curry.Distribution      ( installDir )
-import System.Directory
-import System.FilePath                  ( takeDirectory )
 import Data.List
-import Data.Maybe                       ( fromJust, isNothing )
+import Data.Maybe                    ( fromJust, isNothing )
+import System.Environment            ( getArgs )
 
 import AbstractCurry.Types
 import AbstractCurry.Files
@@ -37,7 +36,8 @@ import FlatCurry.Files  ( readFlatCurry )
 import qualified FlatCurry.Goodies as FCG
 import System.CurryPath ( lookupModuleSourceInLoadPath, modNameToPath
                         , stripCurrySuffix )
-import System.Environment ( getArgs )
+import System.Directory
+import System.FilePath                  ( takeDirectory )
 import System.Process   ( system )
 
 -- in order to use the determinism analysis:

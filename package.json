@@ -16,14 +16,19 @@
         "contracts"     : ">= 3.0.0, < 4.0.0",
         "currycheck"    : ">= 3.0.0, < 4.0.0",
         "currypath"     : ">= 3.0.0, < 4.0.0",
+        "directory"     : ">= 3.0.0, < 4.0.0",
+        "filepath"      : ">= 3.0.0, < 4.0.0",
         "fl-parser"     : ">= 3.0.0, < 4.0.0",
         "flatcurry"     : ">= 3.0.0, < 4.0.0",
         "frontend-exec" : ">= 3.0.0, < 4.0.0",
         "html2"         : ">= 3.0.0, < 4.0.0",
+        "process"       : ">= 3.0.0, < 4.0.0",
         "printf"        : ">= 3.0.0, < 4.0.0",
+        "read-legacy"   : ">= 3.0.0, < 4.0.0",
         "regexp"        : ">= 3.0.0, < 4.0.0",
         "searchtree"    : ">= 3.0.0, < 4.0.0",
         "setfunctions"  : ">= 3.0.0, < 4.0.0",
+        "time"          : ">= 3.0.0, < 4.0.0",
         "wl-pprint"     : ">= 3.0.0, < 4.0.0",
         "xml"           : ">= 3.0.0, < 4.0.0",
         "easycheck"     : ">= 3.0.0, < 4.0.0"
@@ -42,15 +47,6 @@
     "testsuite": [
         { "src-dir": "examples/IntegratedCode",
           "modules": [ "testFormat", "testHtml", "testRegExps" ]
-        },
-        { "src-dir": "examples/IntegratedSQLCode",
-          "options": "-v",
-          "script" : "test.sh"
-        },
-        { "src-dir": "examples/Contracts",
-          "options": "--nospec --nodet --deftype=Int",
-          "modules": [ "BubbleSort", "BubbleSortFormat", "Coin",
-                       "FibInfinite", "Quicksort" ]
         },
         { "src-dir": "examples/DefaultRules",
           "options": "-m40",

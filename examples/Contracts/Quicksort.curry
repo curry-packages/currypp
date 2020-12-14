@@ -6,11 +6,13 @@ import Test.Prop
 -- A specification of sorting a list and an implementation based
 -- on the quicksort algorithm
 
+perm :: [a] -> [a]
 perm []     = []
 perm (x:xs) = insert (perm xs)
  where insert ys     = x:ys
        insert (y:ys) = y : insert ys
 
+sorted :: Ord a => [a] -> Bool
 sorted []       = True
 sorted [_]      = True
 sorted (x:y:ys) = x<=y && sorted (y:ys)
