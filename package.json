@@ -52,6 +52,11 @@
           "options": "-v",
           "script" : "test.sh"
         },
+        { "src-dir": "examples/Contracts",
+          "options": "--nospec --nosource --nodet --deftype=Int",
+          "modules": [ "BubbleSort", "BubbleSortFormat", "Coin",
+                       "FibInfinite", "Quicksort" ]
+        },
         { "src-dir": "examples/DefaultRules",
           "options": "-m40",
           "modules": [ "BreakWhere", "BubbleSort", "ColorMap", "DutchFlag",

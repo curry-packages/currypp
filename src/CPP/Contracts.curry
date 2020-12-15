@@ -288,20 +288,25 @@ genPostCond4Spec _ allfdecls detinfo postdecls
                    in  simpleRule (CPVar varg : map CPVar gsargvars)
                                   (CApply (CVar varg)
                                           (applyF (m,f) (map CVar gsargvars)))]
-     postcheck = CLetDecl
-                  [CLocalPat (CPVar varz)
-                     (CSimpleRhs (CApply (CVar varg) (CVar resultvar)) [])]
-                  (if detspec
-                   then applyF (pre "==")
-                          [CVar varz,
-                           applyF gspecname (map CVar (varg : spargvars))]
-                   else applyF (pre "&&")
-                         [applyF (pre "==") [CVar varz, CVar varz],
-                          applyF (sfMod "valueOf")
-                           [CVar varz,
-                            applyF (sfMod $ "set"++show (ar+1))
-                             (constF gspecname : map CVar (varg :spargvars))]])
-     rename qf = if qf==(m,fpostname) then (m,fpostname++"'org") else qf
+     postcheck =
+       CLetDecl
+         [CLocalPat (CPVar varz)
+                    (CSimpleRhs (CApply (CVar varg) (CVar resultvar)) [])]
+         (if detspec
+            then applyF (pre "==")
+                   [CVar varz, applyF gspecname (map CVar (varg : spargvars))]
+            else applyF (pre "&&")
+                   [applyF (pre "==") [CVar varz, CVar varz],
+                    applyF (sfMod "valueOf")
+                      [CVar varz,
+                       -- Note that this is not a legal (source code) use
+                       -- of set functions due to the application of the
+                       -- observation operation `g`. Thus, the transformed
+                       -- program should not be checked with source code checks
+                       -- by CurryCheck.
+                       applyF (sfMod $ "set" ++ show ar)
+                         (applyF gspecname [CVar varg] : map CVar spargvars)]])
+     rename qf = if qf == (m,fpostname) then (m,fpostname++"'org") else qf
   in [cmtfunc
        ("Parametric postcondition for '"++fname++
         "' (generated from specification). "++oldcmt)
@@ -361,9 +366,10 @@ addContract _ _ _ _ _ (CFunc _ _ _ _ _) =
   error "Internal error in addContract: CFunc occurred"
 addContract opts funposs allfdecls predecls postdecls
             orgfdecl@(CmtFunc cmt qn@(m,f) ar vis qtype _) =
- let argvars   = map (\i -> (i,"x"++show i)) [1..ar]
-     encapsSuf = if withEncapsulate opts then "ND" else ""
-     encaps fn n = if withEncapsulate opts then setFun n fn [] else constF fn
+ let argvars     = map (\i -> (i,"x"++show i)) [1..ar]
+     encapsSuf   = if withEncapsulate opts then "ND" else ""
+     encaps fn n = if withEncapsulate opts then setFun n fn []
+                                           else constF fn
 
      -- Textual comment about function source:
      fref      = string2ac $ "'" ++ f ++ "' (module " ++ m ++
@@ -435,18 +441,6 @@ setTypeInFuncDecl texp = updCFuncDecl id id id id (const texp) id
 --- Adds a suffix to  qualified name.
 withSuffix :: QName -> String -> QName
 withSuffix (m,f) s = (m, f ++ s)
-
--- An operation of the module Test.Contract:
-cMod :: String -> QName
-cMod f = ("Test.Contract",f)
-
--- An operation of the module Control.SetFunctions:
-sfMod :: String -> QName
-sfMod f = ("Control.SetFunctions",f)
-
--- Set function for a function name with given arity and arguments:
-setFun :: Int -> QName -> [CExpr] -> CExpr
-setFun n qn args = applyF (sfMod $ "set"++show n) (constF qn : args)
 
 ------------------------------------------------------------------------
 -- Auxiliary operations:
@@ -541,8 +535,20 @@ easyCheckModule = "Test.EasyCheck"
 setFunMod :: String
 setFunMod = "Control.SetFunctions"
 
+-- An operation of the module Control.SetFunctions:
+sfMod :: String -> QName
+sfMod f = (setFunMod,f)
+
+-- Set function for a function name with given arity and arguments:
+setFun :: Int -> QName -> [CExpr] -> CExpr
+setFun n qn args = applyF (sfMod $ "set" ++ show n) (constF qn : args)
+
 --- Name of the contract module.
 contractMod :: String
 contractMod = "Test.Contract"
+
+-- An operation of the module Test.Contract:
+cMod :: String -> QName
+cMod f = (contractMod,f)
 
 ------------------------------------------------------------------------

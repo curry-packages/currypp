@@ -2,7 +2,11 @@
 
 import Test.Prop
 
--- Examples with non-determinististic specifications
+-- Examples with non-determinististic specifications.
+-- Note that due to the postconditions which are automatically generated
+-- from the specifications, the transformed programs contains unintended
+-- uses of set functions so that it should not be checked with
+-- source checks by CurryCheck.
 
 coin'spec :: Int
 coin'spec = 0 ? 1
