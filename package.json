@@ -48,6 +48,10 @@
         { "src-dir": "examples/IntegratedCode",
           "modules": [ "testFormat", "testHtml", "testRegExps" ]
         },
+        { "src-dir": "examples/IntegratedSQLCode",
+          "options": "-v",
+          "script" : "test.sh"
+        },
         { "src-dir": "examples/DefaultRules",
           "options": "-m40",
           "modules": [ "BreakWhere", "BubbleSort", "ColorMap", "DutchFlag",

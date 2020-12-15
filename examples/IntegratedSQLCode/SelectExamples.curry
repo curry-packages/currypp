@@ -13,7 +13,7 @@ queryS1 :: IO (SQLResult [Student])
 queryS1 = ``sql Select * From Student;''
 
 allStudents :: IO [Student]
-allStudents = liftIO fromSQLResult ``sql Select * From Student;''
+allStudents = fmap fromSQLResult ``sql Select * From Student;''
 
 testS1 :: PropIO
 testS1 = queryS1 `returns` Right
@@ -31,7 +31,7 @@ testS2 = do
            printResult result
 
 queryS3 :: IO [String]
-queryS3 = liftIO fromSQLResult
+queryS3 = fmap fromSQLResult
             ``sql Select Distinct s.Name From Student as s;''
 
 testS3 :: PropIO

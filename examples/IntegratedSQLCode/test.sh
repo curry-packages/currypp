@@ -16,13 +16,10 @@ fi
 
 ERD2CURRY=$HOME/.cpm/bin/erd2curry
 if [ ! -x "$ERD2CURRY" ] ; then
-  ERD2CURRY=$CURRYBINDIR/$CURRYEXEC-erd2curry
-  if [ ! -x "$ERD2CURRY" ] ; then
-    echo "SQL integration not tested: no executable 'erd2curry' found!"
-    echo "To run the SQL integration test, install 'erd2curry' by:"
-    echo "> cypm install ertools"
-    exit
-  fi
+  echo "SQL integration not tested: no executable 'erd2curry' found!"
+  echo "To run the SQL integration test, install 'erd2curry' by:"
+  echo "> cypm install ertools"
+  exit
 fi
 
 ALLTESTS="test*.curry"
@@ -51,7 +48,7 @@ exectests() {
   # fill database:
   $CURRYBINDIR/curry $REPL_OPTS :l CreateData :eval main :q
   # run query tests:
-  $CURRYBINDIR/curry check SelectExamples
+  curry-check SelectExamples
 }
 
 LOGFILE=xxx$$
