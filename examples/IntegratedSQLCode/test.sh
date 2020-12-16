@@ -14,7 +14,7 @@ else
     exit 1
 fi
 
-ERD2CURRY=$HOME/.cpm/bin/erd2curry
+ERD2CURRY=`which erd2curry`
 if [ ! -x "$ERD2CURRY" ] ; then
   echo "SQL integration not tested: no executable 'erd2curry' found!"
   echo "To run the SQL integration test, install 'erd2curry' by:"

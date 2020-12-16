@@ -7,7 +7,7 @@
 --- is supported (option `foreigncode`, see module `Translator`).
 ---
 --- @author Michael Hanus
---- @version October 2019
+--- @version December 2020
 ------------------------------------------------------------------------------
 
 import Control.Monad        ( when )
@@ -32,7 +32,7 @@ import TransICode           ( translateIntCode )
 cppBanner :: String
 cppBanner = unlines [bannerLine,bannerText,bannerLine]
  where
-   bannerText = "Curry Preprocessor (version of 15/12/2020)"
+   bannerText = "Curry Preprocessor (version of 16/12/2020)"
    bannerLine = take (length bannerText) (repeat '=')
 
 --- Preprocessor targets, i.e., kind of entities to be preprocessed:
@@ -144,7 +144,7 @@ showUsage args = do
 usageText :: String
 usageText = unlines $
  [ ""
- , "Usage: curry pp <OrgFileName> <InputFilePath> <OutputFilePath> <options>\n"
+ , "Usage: currypp <OrgFileName> <InputFilePath> <OutputFilePath> <options>\n"
  , "<OrgFileName>   : name of original program source file"
  , "<InputFilePath> : name of the actual input file"
  , "<OutputFilePath>: name of the file where output should be written\n"
