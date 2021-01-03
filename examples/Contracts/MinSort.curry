@@ -1,4 +1,4 @@
-{-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=contracts #-}
+{-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=contracts #-}
 
 -- straight selection sort with specification
 import Control.SetFunctions

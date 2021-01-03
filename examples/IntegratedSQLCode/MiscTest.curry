@@ -1,4 +1,4 @@
-{-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=foreigncode #-}
+{-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=foreigncode #-}
 
 --- test module for integration of SQL
 --- using currypp

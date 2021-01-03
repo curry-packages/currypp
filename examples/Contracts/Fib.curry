@@ -1,4 +1,4 @@
-{-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=contracts #-}
+{-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=contracts #-}
 
 -- Fibonacci numbers specified by traditional recursive definition
 -- and computed efficiently by an infinite list.

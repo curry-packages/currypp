@@ -7,7 +7,7 @@
 --- is supported (option `foreigncode`, see module `Translator`).
 ---
 --- @author Michael Hanus
---- @version December 2020
+--- @version January 2021
 ------------------------------------------------------------------------------
 
 import Control.Monad        ( when )
@@ -264,7 +264,7 @@ pathToModName currypath psf =
     | dir `isPrefixOf` pp = drop (length dir + 1) pp
     | otherwise           = tryRemovePathPrefix dirs pp
 
--- Replace OPTIONS_CYMAKE line containing currypp call
+-- Replace OPTIONS_FRONTEND / OPTIONS_CYMAKE line containing currypp call
 -- in a source text by blank line (to avoid recursive calls):
 replaceOptionsLine :: String -> String
 replaceOptionsLine = unlines . map replOptLine . lines
@@ -273,11 +273,13 @@ replaceOptionsLine = unlines . map replOptLine . lines
                   then " "
                   else s
 
--- Is this a OPTIONS_CYMAKE comment line?
+-- Is this an OPTIONS_FRONTEND or OPTIONS_CYMAKE comment line?
 isOptionLine :: String -> Bool
-isOptionLine s = "{-# OPTIONS_CYMAKE " `isPrefixOf` dropWhile isSpace s -- -}
+isOptionLine s =
+ "{-# OPTIONS_CYMAKE "   `isPrefixOf` dropWhile isSpace s || 
+ "{-# OPTIONS_FRONTEND " `isPrefixOf` dropWhile isSpace s     -- -}
 
--- Extract all OPTIONS_CYMAKE lines:
+-- Extract all OPTIONS_FRONTEND / OPTIONS_CYMAKE lines:
 optionLines :: String -> String
 optionLines = unlines . filter isOptionLine . lines
 

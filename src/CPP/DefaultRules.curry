@@ -32,7 +32,7 @@
 ---     Springer LNCS 10137, pp. 1-18, 2017 
 --- 
 --- This preprocessor can be invoked by the Curry preprocessor `currypp`
---- with the option `defaultrules` (provided as a CYMAKE option,
+--- with the option `defaultrules` (provided as a FRONTEND option,
 --- see the example programs in the directory `examples/DefaultRules`).
 ---
 --- @author Michael Hanus

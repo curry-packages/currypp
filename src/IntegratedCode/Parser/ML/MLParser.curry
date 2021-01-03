@@ -5,7 +5,7 @@
 --- @version February 2015
 ------------------------------------------------------------------------------
 
-{-# OPTIONS_CYMAKE -Wno-missing-signatures -Wno-incomplete-patterns #-}
+{-# OPTIONS_FRONTEND -Wno-missing-signatures -Wno-incomplete-patterns #-}
 
 module MLParser (lex,layout,parse) where
 

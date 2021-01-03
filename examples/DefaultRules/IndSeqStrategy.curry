@@ -1,5 +1,5 @@
-{-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=defaultrules --optF=-o #-}
-{-# OPTIONS_CYMAKE -Wnone #-}
+{-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules --optF=-o #-}
+{-# OPTIONS_FRONTEND -Wnone #-}
 
 -- This example shows that optimal evaluation is still possible
 -- with default rules.

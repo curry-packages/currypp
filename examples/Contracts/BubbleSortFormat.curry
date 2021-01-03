@@ -1,5 +1,5 @@
-{-# OPTIONS_CYMAKE -F --pgmF=currypp #-}
-{-# OPTIONS_CYMAKE -Wnone #-}
+{-# OPTIONS_FRONTEND -F --pgmF=currypp #-}
+{-# OPTIONS_FRONTEND -Wnone #-}
 
 -- Example for using integrated code, default rules, and contracts in one
 -- module

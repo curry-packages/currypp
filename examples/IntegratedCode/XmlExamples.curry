@@ -1,4 +1,4 @@
-{-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=foreigncode --optF=-o #-}
+{-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=foreigncode --optF=-o #-}
 
 ------------------------------------------------------------------------------
 --- This program contains examples for integrated code to support

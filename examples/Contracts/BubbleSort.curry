@@ -1,4 +1,4 @@
-{-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=defaultrules --optF=contracts #-}
+{-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules --optF=contracts #-}
 
 import Test.Prop
 

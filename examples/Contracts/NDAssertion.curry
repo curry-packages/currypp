@@ -1,4 +1,4 @@
-{-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=contracts --optF=-e #-}
+{-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=contracts --optF=-e #-}
 
 -- Example for a postcondition with a nondeterministic definition:
 por True _ = True

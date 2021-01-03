@@ -1,4 +1,4 @@
-{-# OPTIONS_CYMAKE -F --pgmF=currypp --optF=contracts --optF=-e #-}
+{-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=contracts --optF=-e #-}
 
 -- Implementation of quicksort with partition
 -- Use option "-e" for contract wrapper (see part'post below).
