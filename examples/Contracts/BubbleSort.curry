@@ -4,7 +4,7 @@ import Test.Prop
 
 -- Bubble sort formulation with default rule as deterministic operation:
 sort :: [Int] ->DET [Int]
-sort (xs++[x,y]++ys) | x>y = sort (xs++[y,x]++ys)
+sort (xs ++ [x,y] ++ ys) | x>y = sort (xs ++ [y,x] ++ ys)
 sort'default xs = xs
 
 -- Precondition: we don't like to sort empty lists...

@@ -32,7 +32,7 @@ import TransICode           ( translateIntCode )
 cppBanner :: String
 cppBanner = unlines [bannerLine,bannerText,bannerLine]
  where
-   bannerText = "Curry Preprocessor (version of 03/01/2021)"
+   bannerText = "Curry Preprocessor (version of 18/01/2021)"
    bannerLine = take (length bannerText) (repeat '=')
 
 --- Preprocessor targets, i.e., kind of entities to be preprocessed:

@@ -21,7 +21,6 @@ import Control.Monad                 ( when, unless )
 import Curry.Compiler.Distribution   ( installDir )
 import Data.Char
 import Data.List
-import Data.Maybe                    ( fromJust, isNothing )
 import System.Environment            ( getArgs )
 
 import AbstractCurry.Types
@@ -178,8 +177,8 @@ transformCProg verb opts modname srctxt orgprog outmodname = do
                map (\ ((mn,fn),err) -> fn ++ " (module " ++ mn ++ "): " ++ err)
                    usageerrors)
     error "Contract transformation aborted"
-  let -- to avoid constructor CFunc and references to Test.Prop
-      prog = addCmtFuncInProg (renameProp2EasyCheck orgprog)
+  let -- to avoid constructor CFunc
+      prog = addCmtFuncInProg orgprog --(renameProp2EasyCheck orgprog)
       funposs      = linesOfFDecls srctxt prog
       fdecls       = functions prog
       funspecs     = getFunDeclsWith isSpecName prog
