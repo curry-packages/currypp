@@ -16,8 +16,7 @@ module SQLConverter(parseSQL, readParserInfo, ParserInfo) where
 
 
 import Control.Monad (when)
-import System.IO    (openFile, IOMode(..), hGetContents)
-import ReadShowTerm (readsQTerm)
+import System.IO     (openFile, IOMode(..), hGetContents)
 
 import ParseTypes
 
@@ -40,8 +39,8 @@ import SQLTyper
 parseSQL :: Bool -> Either String ParserInfo -> LangParser
 parseSQL withrundb parserInfo pos code =
    case parserInfo of
-         Left err -> return (throwPM pos err)
-         Right pi -> processCompilation withrundb pi pos code
+     Left err -> return (throwPM pos err)
+     Right pi -> processCompilation withrundb pi pos code
 
 --- Reader for parser information file.
 --- @param verb - verbosity level
@@ -52,8 +51,8 @@ readParserInfo verb filename = do
   when (verb > 0) $ putStrLn $
     "Reading SQL model info file '" ++ filename ++ "'..."
   handle <- openFile filename ReadMode
-  contents <- (hGetContents handle)
-  case readsQTerm contents of
+  contents <- hGetContents handle
+  case reads contents of
     []        -> return (Left "ParserInfo file not found or corrupted.")
     ((a,_):_) -> return (Right a)
 

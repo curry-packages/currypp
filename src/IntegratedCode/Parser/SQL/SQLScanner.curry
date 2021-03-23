@@ -8,7 +8,6 @@ module SQLScanner(scan) where
 import Data.Char (isDigit, isAlpha, isAlphaNum, toLower)
 import Data.List (splitOn)
 import Data.Time (CalendarTime (..))
-import ReadShowTerm (readsQTerm)
 
 import qualified Data.Map as Map
 
@@ -92,7 +91,7 @@ getNumberOrDate str = if (':' `elem` str)
 getNumber :: String -> Token
 getNumber str = if ('.' `elem` str) then Constant (NumFloat f)
                                     else Constant (NumInt (read str))
- where ((f,_):_) = readsQTerm str
+ where ((f,_):_) = reads str
 
 -- reader for embedded curry expression surrounded by {}
 readEmbedExp :: String -> [Token]

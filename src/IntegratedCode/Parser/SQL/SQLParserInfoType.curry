@@ -43,11 +43,13 @@ data ParserInfo = PInfo String
                         NullableFlags
                         AttributeLists
                         AttributeTypes
+ deriving (Read,Show)
 
 --- Data type representing possible relationships in the relational model.
 data RelationType = MtoN String
                    | NtoOne String
                    | OnetoN String
+ deriving (Read,Show)
 
 --- Getter for path to used database.
 dbName :: ParserInfo -> String
