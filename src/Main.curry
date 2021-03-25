@@ -7,7 +7,7 @@
 --- is supported (option `foreigncode`, see module `Translator`).
 ---
 --- @author Michael Hanus
---- @version January 2021
+--- @version March 2021
 ------------------------------------------------------------------------------
 
 import Control.Monad        ( when )
@@ -32,7 +32,7 @@ import TransICode           ( translateIntCode )
 cppBanner :: String
 cppBanner = unlines [bannerLine,bannerText,bannerLine]
  where
-   bannerText = "Curry Preprocessor (version of 18/01/2021)"
+   bannerText = "Curry Preprocessor (version of 24/03/2021)"
    bannerLine = take (length bannerText) (repeat '=')
 
 --- Preprocessor targets, i.e., kind of entities to be preprocessed:
