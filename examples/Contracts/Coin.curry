@@ -1,5 +1,7 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=contracts #-}
 
+import Control.SetFunctions
+import Test.Contract
 import Test.Prop
 
 -- Examples with non-determinististic specifications.

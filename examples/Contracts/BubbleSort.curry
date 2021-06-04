@@ -1,5 +1,7 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules --optF=contracts #-}
 
+import Control.SetFunctions
+import Test.Contract
 import Test.Prop
 
 -- Bubble sort formulation with default rule as deterministic operation:

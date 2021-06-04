@@ -4,7 +4,9 @@
 -- Example for using integrated code, default rules, and contracts in one
 -- module
 
+import Control.SetFunctions
 import Data.Format
+import Test.Contract
 import Test.Prop
 
 showInt :: Int -> String

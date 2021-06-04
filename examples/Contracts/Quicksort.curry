@@ -1,6 +1,8 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=contracts #-}
 {-# OPTIONS_FRONTEND -Wnone #-}
 
+import Control.SetFunctions
+import Test.Contract
 import Test.Prop
 
 -- A specification of sorting a list and an implementation based
@@ -32,7 +34,7 @@ sort'spec x | y =:= perm x & sorted y = y  where y free
 
 -- A buggy implementation of quicksort:
 sort :: [Int] -> [Int]
-sort [] = []
+sort []     = []
 sort (x:xs) = sort (filter (<x) xs) ++ [x] ++ sort (filter (>x) xs)
 
 input = [26,18,5,4,16,8,22,17]
