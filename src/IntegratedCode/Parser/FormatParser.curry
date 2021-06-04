@@ -24,7 +24,7 @@
 --- `printf`. Not all parsable expressions are usable.__
 ---
 --- @author Jasper Sikorra (with changes by Michael Hanus)
---- @version December 2018
+--- @version June 2021
 ------------------------------------------------------------------------------
 module FormatParser ( parse ) where
 
@@ -34,7 +34,7 @@ import Parser
 import Data.Char
 import Numeric              ( readNat )
 
-import Control.AllSolutions ( getOneSolution )
+import Control.AllValues    ( getOneSolution )
 
 import ParseTypes
 
