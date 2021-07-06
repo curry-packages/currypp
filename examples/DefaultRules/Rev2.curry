@@ -2,6 +2,7 @@
 {-# OPTIONS_FRONTEND -Wnone #-}
 
 import Test.Prop
+import Control.SetFunctions -- required by default rules
 
 -- Reverse a list if it has exactly two elements:
 rev2 :: Data a => [a] -> [a]

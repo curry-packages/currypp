@@ -1,6 +1,7 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules #-}
 {-# OPTIONS_FRONTEND -Wnone #-}
 
+import Control.SetFunctions
 import Test.Prop
 
 -- Example: parse World Cup soccer scores (e.g., "_:_", "3:2")

@@ -1,5 +1,6 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules #-}
 
+import Control.SetFunctions -- required by default rules
 import Test.Prop
 
 -- Bubble sort formulation with default rule as deterministic function

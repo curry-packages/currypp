@@ -1,5 +1,6 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules #-}
 
+import Control.SetFunctions -- required by deterministic functions
 import Test.Prop
 
 -- Parallel or declared as a deterministic function:

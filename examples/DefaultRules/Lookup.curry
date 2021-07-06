@@ -1,5 +1,6 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules #-}
 
+import Control.SetFunctions
 import Test.Prop
 
 -- Lookup with default rules:

@@ -1,6 +1,7 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules #-}
 {-# OPTIONS_FRONTEND -Wnone #-}
 
+import Control.SetFunctions
 import Test.Prop
 
 -------------------------------------------------------------------------
@@ -8,13 +9,14 @@ import Test.Prop
 
 -- Some permutation of a list of elements:
 perm :: [a] -> [a]
-perm [] = []
+perm []     = []
 perm (x:xs) = ndinsert (perm xs)
  where
   ndinsert ys     = x : ys
   ndinsert (y:ys) = y : ndinsert ys
 
 -- A placement is safe if two queens are not in a same diagonal:
+safe :: [Int] -> [Int]
 safe (_++[x]++y++[z]++_) | abs (x-z) == length y + 1 = failed
 safe'default xs = xs
 
