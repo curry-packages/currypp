@@ -11,7 +11,7 @@
 --- > Declarative Languages (PADL 2012), pp. 33-47, Springer LNCS 7149, 2012
 ---
 --- @author Michael Hanus
---- @version December 2020
+--- @version November 2021
 ------------------------------------------------------------------------
 
 module CPP.Contracts ( main, translateContracts )
@@ -36,7 +36,7 @@ import qualified FlatCurry.Goodies as FCG
 import System.CurryPath ( lookupModuleSourceInLoadPath, modNameToPath
                         , stripCurrySuffix )
 import System.Directory
-import System.FilePath                  ( takeDirectory )
+import System.FilePath  ( takeDirectory )
 import System.Process   ( system )
 
 -- in order to use the determinism analysis:
@@ -48,13 +48,14 @@ import SimplifyPostConds
 import TheoremUsage
 
 import CPP.CompileWithFrontend ( compileImportedModule )
+import CPP.Helpers             ( checkRequiredImport, setFunMod )
 
 ------------------------------------------------------------------------
 
 banner :: String
 banner = unlines [bannerLine,bannerText,bannerLine]
  where
-   bannerText = "Contract Transformation Tool (Version of 11/10/19)"
+   bannerText = "Contract Transformation Tool (Version of 01/11/21)"
    bannerLine = take (length bannerText) (repeat '=')
 
 ------------------------------------------------------------------------
@@ -177,8 +178,7 @@ transformCProg verb opts modname srctxt orgprog outmodname = do
                map (\ ((mn,fn),err) -> fn ++ " (module " ++ mn ++ "): " ++ err)
                    usageerrors)
     error "Contract transformation aborted"
-  let -- to avoid constructor CFunc
-      prog = addCmtFuncInProg orgprog --(renameProp2EasyCheck orgprog)
+  let prog         = addCmtFuncInProg orgprog -- to avoid constructor CFunc
       funposs      = linesOfFDecls srctxt prog
       fdecls       = functions prog
       funspecs     = getFunDeclsWith isSpecName prog
@@ -232,8 +232,10 @@ transformProgram verb opts funposs allfdecls detinfo
                             fdecls
       -- compute postconditions actually used for contract checking:
       contractpcs  = postdecls++newpostconds
+  checkRequiredImport mname contractMod imps
+  checkRequiredImport mname setFunMod imps
   unless (contractMod `elem` imps) $ compileImportedModule verb contractMod
-  unless (setFunMod `elem` imps) $ compileImportedModule verb setFunMod
+  unless (setFunMod   `elem` imps) $ compileImportedModule verb setFunMod
   return $ CurryProg
     mname (nub (contractMod : setFunMod : imps))
     dfltdecl clsdecls instdecls tdecls
@@ -512,27 +514,6 @@ infixIDs =  "~!@#$%^&*+-=<>?./|\\:"
 
 ------------------------------------------------------------------------
 -- Auxiliaries
-
--- Rename all module references to "Test.Prog" into "Test.EasyCheck"
-renameProp2EasyCheck :: CurryProg -> CurryProg
-renameProp2EasyCheck prog =
-  updCProg id (map rnmMod) id id id id id id
-           (updQNamesInCProg (\ (mod,n) -> (rnmMod mod,n)) prog)
- where
-  rnmMod mod | mod == propModule = easyCheckModule
-             | otherwise         = mod
-
---- Name of the Test.Prop module (the clone of the EasyCheck module).
-propModule :: String
-propModule = "Test.Prop"
-
---- Name of the EasyCheck module.
-easyCheckModule :: String
-easyCheckModule = "Test.EasyCheck"
-
---- Name of the set functions module.
-setFunMod :: String
-setFunMod = "Control.SetFunctions"
 
 -- An operation of the module Control.SetFunctions:
 sfMod :: String -> QName

@@ -36,7 +36,7 @@
 --- see the example programs in the directory `examples/DefaultRules`).
 ---
 --- @author Michael Hanus
---- @version December 2020
+--- @version November 2021
 -----------------------------------------------------------------------------
 
 module CPP.DefaultRules ( translateDefaultRulesAndDetOps )
@@ -56,6 +56,7 @@ import TheoremUsage        ( determinismTheoremFor, existsProofFor
                            , getModuleProofFiles, isProofFileNameFor )
 
 import CPP.CompileWithFrontend ( compileImportedModule )
+import CPP.Helpers             ( checkRequiredImport, setFunMod )
 
 --------------------------------------------------------------------
 
@@ -63,7 +64,7 @@ banner :: String
 banner = unlines [bannerLine,bannerText,bannerLine]
  where
    bannerText =
-     "Transformation Tool for Curry with Default Rules (Version of 11/10/19)"
+     "Transformation Tool for Curry with Default Rules (Version of 01/11/21)"
    bannerLine = take (length bannerText) (repeat '=')
 
 ------------------------------------------------------------------------
@@ -164,13 +165,15 @@ translateProg verb trscm
                    usageerrors)
     error "Transformation aborted"
   -- now we do not have to check the correct usage of default rules...
-  unless (setFunMod `elem` imps) $
-    compileImportedModule verb setFunMod
-  return $ if null deffuncs && null detfuncnames
-             then Nothing
-             else Just (detfuncnames,
-                        CurryProg mn newimports dfltdecl clsdecls
-                                  instdecls tdecls newfdecls ops)
+  if null deffuncs && null detfuncnames
+    then return Nothing
+    else do
+      checkRequiredImport mn setFunMod imps
+      unless (setFunMod `elem` imps) $
+        compileImportedModule verb setFunMod
+      return $ Just (detfuncnames,
+                     CurryProg mn newimports dfltdecl clsdecls
+                               instdecls tdecls newfdecls ops)
  where
   newimports       = if setFunMod `elem` imps then imps else setFunMod:imps
   detfuncnames     = map funcName (filter isDetFun fdecls)
@@ -383,16 +386,13 @@ preUnit = CSymbol (pre "()")
 preUntyped :: CTypeExpr
 preUntyped = CTCons (pre "untyped")
 
-setFunMod :: String
-setFunMod = "Control.SetFunctions"
-
 --- Extracts all elements with a single occurrence in a given list.
 extractSingles :: Eq a => [a] -> [a]
 extractSingles [] = []
 extractSingles (x:xs) =
   if null (filter (==x) xs)
-  then x : extractSingles xs
-  else extractSingles (filter (/=x) xs)
+    then x : extractSingles xs
+    else extractSingles (filter (/=x) xs)
 
 --- Replaces all variables occurring in the first argument by
 --- anonymous variables in a pattern.
