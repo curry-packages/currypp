@@ -46,16 +46,14 @@ import Control.Monad               ( when, unless )
 import Curry.Compiler.Distribution ( curryCompiler )
 import Data.List                   ( partition )
 
-import AbstractCurry.Types
-import AbstractCurry.Files
-import AbstractCurry.Select
 import AbstractCurry.Build
-import AbstractCurry.Pretty
-import DefaultRuleUsage
-import System.CurryPath ( modNameToPath )
-import System.FilePath  ( takeDirectory )
-import TheoremUsage     ( determinismTheoremFor, existsProofFor
-                        , getModuleProofFiles, isProofFileNameFor )
+import AbstractCurry.Types
+import AbstractCurry.Select
+import DefaultRuleUsage    ( checkDefaultRules, fromDefaultName, isDefaultFunc )
+import System.CurryPath    ( modNameToPath )
+import System.FilePath     ( takeDirectory )
+import TheoremUsage        ( determinismTheoremFor, existsProofFor
+                           , getModuleProofFiles, isProofFileNameFor )
 
 import CPP.CompileWithFrontend ( compileImportedModule )
 

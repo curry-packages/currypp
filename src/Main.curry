@@ -7,22 +7,21 @@
 --- is supported (option `foreigncode`, see module `Translator`).
 ---
 --- @author Michael Hanus
---- @version March 2021
+--- @version November 2021
 ------------------------------------------------------------------------------
 
 import Control.Monad        ( when )
-import Data.Char            ( isDigit, digitToInt, isSpace )
+import Data.Char            ( digitToInt )
 import Data.List
 import System.Directory     ( copyFile, renameFile )
 import System.FilePath
 
 import AbstractCurry.Types
-import AbstractCurry.Files
+import AbstractCurry.Files  ( readCurry, readUntypedCurry )
 import AbstractCurry.Pretty ( showCProg )
-import AbstractCurry.Select ( progName )
 import System.CurryPath     ( stripCurrySuffix )
 import System.CPUTime       ( getCPUTime )
-import System.Environment   ( getEnv, getArgs )
+import System.Environment   ( getEnv, getArgs, setEnv )
 import System.Process       ( exitWith )
 
 import CPP.DefaultRules     ( translateDefaultRulesAndDetOps )
@@ -32,7 +31,7 @@ import TransICode           ( translateIntCode )
 cppBanner :: String
 cppBanner = unlines [bannerLine,bannerText,bannerLine]
  where
-   bannerText = "Curry Preprocessor (version of 24/03/2021)"
+   bannerText = "Curry Preprocessor (version of 01/11/2021)"
    bannerLine = take (length bannerText) (repeat '=')
 
 --- Preprocessor targets, i.e., kind of entities to be preprocessed:
@@ -40,10 +39,10 @@ data PPTarget = ForeignCode | DefaultRules | Contracts
  deriving Eq
 
 parseTarget :: String -> Maybe PPTarget
-parseTarget t | t=="foreigncode"  = Just ForeignCode
-              | t=="defaultrules" = Just DefaultRules
-              | t=="contracts"    = Just Contracts
-              | otherwise         = Nothing
+parseTarget t | t == "foreigncode"  = Just ForeignCode
+              | t == "defaultrules" = Just DefaultRules
+              | t == "contracts"    = Just Contracts
+              | otherwise           = Nothing
 
 --- Preprocessor options:
 data PPOpts =
@@ -75,36 +74,50 @@ main = do
        maybe (showUsage args)
              (\opts ->
                if optHelp opts
-               then putStrLn (cppBanner ++ usageText) >> exitWith 1
-               else do
-                cpath <- getEnv "CURRYPATH"
-                let modname = pathToModName cpath orgSourceFile
-                when (optVerb opts > 1) $ putStr cppBanner
-                when (optVerb opts > 2) $ putStr $ unlines
-                  ["CURRYPATH          : " ++ cpath
-                  ,"Module name        : " ++ modname
-                  ,"Original file name : " ++ orgSourceFile
-                  ,"Input    file name : " ++ inFile
-                  ,"Output   file name : " ++ outFile ]
-                preprocess opts modname orgSourceFile inFile outFile
-                when (optSave opts) $ saveFile orgSourceFile outFile
-                when (optVerb opts > 3) $ do
-                  putStrLn "TRANSFORMED PROGRAM:"
-                  putStrLn "===================="
-                  readFile outFile >>= putStrLn
-                  putStrLn "--------------------"
+                 then putStrLn (cppBanner ++ usageText) >> exitWith 1
+                 else do
+                  cpath <- getEnv "CURRYPATH"
+                  let (mbdir, modname) = pathToModName cpath orgSourceFile
+                  when (optVerb opts > 1) $ putStr cppBanner
+                  when (optVerb opts > 2) $ putStr $ unlines
+                    ["CURRYPATH          : " ++ cpath
+                    ,"Module name        : " ++ modname
+                    ,"Original file name : " ++ orgSourceFile
+                    ,"Input    file name : " ++ inFile
+                    ,"Output   file name : " ++ outFile ]
+                  addDir2CurryPath opts cpath mbdir $
+                    preprocess opts modname orgSourceFile inFile outFile
+                  when (optSave opts) $ saveFile orgSourceFile outFile
+                  when (optVerb opts > 3) $ do
+                    putStrLn "TRANSFORMED PROGRAM:"
+                    putStrLn "===================="
+                    readFile outFile >>= putStrLn
+                    putStrLn "--------------------"
              )
              (processOptions initOpts options)
     _ -> maybe (showUsage args)
                (\opts -> if optHelp opts
-                         then putStrLn (cppBanner ++ usageText)
-                         else showUsage args)
+                           then putStrLn (cppBanner ++ usageText)
+                           else showUsage args)
                (processOptions initOpts args)
  where
+  -- extend CURRYPATH with a directory (if necessary) and execute last argument
+  addDir2CurryPath _    _     Nothing    act = act
+  addDir2CurryPath opts cpath (Just dir) act
+    | dir == "." = act
+    | otherwise = do
+      when (optVerb opts > 2) $ putStrLn $
+        "Adding directory '" ++ dir ++ "' to CURRYPATH"
+      let newcpath = if null cpath then dir
+                                   else dir ++ [searchPathSeparator] ++ cpath
+      setEnv "CURRYPATH" newcpath
+      act
+      setEnv "CURRYPATH" cpath
+ 
   saveFile orgSourceFile outFile = do
     let sFile = orgSourceFile++".CURRYPP"
     copyFile outFile sFile
-    putStrLn $ "Translated Curry file written to '"++sFile++"'"
+    putStrLn $ "Translated Curry file written to '" ++ sFile ++ "'"
 
 processOptions :: PPOpts -> [String] -> Maybe PPOpts
 processOptions opts optargs = case optargs of
@@ -247,22 +260,38 @@ callPreprocessors opts optlines modname srcprog orgfile
   contopts  = optContracts opts
 
 --- Transforms a file path name for a module back into a hierarchical module
---- since only the file path of a module is passed to the preprocessor.
---- This is done only if it is a local file path name,
---- otherwise it is difficult to reconstruct the original module name
---- from the file path.
-pathToModName :: String -> String -> String
+--- name since only the file path of a module is passed to the preprocessor.
+--- This is done if the file path name is prefixed by a directory in the
+--- `currypath`, otherwise the directory of the path is returned in
+--- the first result component and the plain base name in the second.
+--- This might be wrong for a hierachical module not occurring in the
+--- `currypath`, but in this case it is difficult to reconstruct
+--- the original module name from the file path without looking inside the
+--- module.
+pathToModName :: String -> String -> (Maybe String, String)
 pathToModName currypath psf =
-  if isRelative p
-   then intercalate "." (splitDirectories  p)
-   else takeBaseName p
+  tryRemovePathPrefix (prefixLast (splitSearchPath currypath))
  where
-  p = tryRemovePathPrefix (splitSearchPath currypath) (stripCurrySuffix psf)
+  pp = stripCurrySuffix psf
 
-  tryRemovePathPrefix [] pp = pp
-  tryRemovePathPrefix (dir:dirs) pp
-    | dir `isPrefixOf` pp = drop (length dir + 1) pp
-    | otherwise           = tryRemovePathPrefix dirs pp
+  tryRemovePathPrefix [] =
+    let (dir,bname) = splitFileName pp
+    in (Just (dropTrailingPathSeparator dir), bname)
+  tryRemovePathPrefix (dir:dirs)
+    | dir `isPrefixOf` pp = (Nothing, dirPath2mod $ drop (length dir + 1) pp)
+    | otherwise           = tryRemovePathPrefix dirs
+
+  -- transform dir-path name into hierarchical module name
+  dirPath2mod = intercalate "." . splitDirectories
+
+  -- move directories which are prefixed by another one in the path
+  -- before the other ones, e.g.,
+  --     prefixLast ["src","aaa","src/ab"] == ["src/ab","src","aaa"]
+  prefixLast []     = []
+  prefixLast (x:xs) =
+    let (longer,rest) = partition (x `isPrefixOf`) xs
+    in if null longer then x : prefixLast xs
+                      else prefixLast (longer ++ x : rest)
 
 -- Replace OPTIONS_FRONTEND / OPTIONS_CYMAKE line containing currypp call
 -- in a source text by blank line (to avoid recursive calls):
