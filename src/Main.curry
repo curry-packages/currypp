@@ -291,7 +291,7 @@ pathToModName currypath psf =
   prefixLast (x:xs) =
     let (longer,rest) = partition (x `isPrefixOf`) xs
     in if null longer then x : prefixLast xs
-                      else prefixLast (longer ++ x : rest)
+                      else prefixLast (filter (/=x) longer ++ x : rest)
 
 -- Replace OPTIONS_FRONTEND / OPTIONS_CYMAKE line containing currypp call
 -- in a source text by blank line (to avoid recursive calls):
