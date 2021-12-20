@@ -1,18 +1,8 @@
 #!/bin/sh
 # script to test the examples for the SQL preprocessor:
 
-# Root location of the Curry System specified by variable CURRYROOT
-CURRYROOT=`$CURRYBIN :set v0 :set -time :add Curry.Compiler.Distribution :eval "putStrLn installDir" :quit`
-CURRYBINDIR=$CURRYROOT/bin
-
-if [ -x "$CURRYBINDIR/pakcs" ] ; then
-    CURRYEXEC=pakcs
-elif [ -x "$CURRYBINDIR/kics2" ] ; then
-    CURRYEXEC=kics2
-else
-    echo "ERROR: Unknown Curry system!"
-    exit 1
-fi
+# Compute bin directory of the Curry System:
+CURRYBINDIR=$(dirname $(realpath $CURRYBIN))
 
 ERD2CURRY=`which erd2curry`
 if [ ! -x "$ERD2CURRY" ] ; then
