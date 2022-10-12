@@ -27,7 +27,7 @@ import System.Process       ( exitWith )
 import CPP.DefaultRules     ( translateDefaultRulesAndDetOps )
 import CPP.Config           ( packageVersion )
 import CPP.Contracts        ( translateContracts )
-import TransICode           ( translateIntCode )
+import CPP.ICode.TransICode ( translateIntCode )
 
 ------------------------------------------------------------------------------
 cppBanner :: String

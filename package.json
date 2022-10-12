@@ -32,12 +32,6 @@
         "xml"           : ">= 3.0.0, < 4.0.0"
     },
     "configModule": "CPP.Config",
-    "sourceDirs": [ "src",
-                    "src/IntegratedCode",
-                    "src/IntegratedCode/Parser",
-                    "src/IntegratedCode/Parser/ML",
-                    "src/IntegratedCode/Parser/SQL"
-                  ],
     "exportedModules": [ "Main" ],
     "executable": {
         "name": "currypp",
