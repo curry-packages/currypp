@@ -33,14 +33,14 @@ import SQLParserInfoType
 --- Invokes the consistency check if a valid AST is given,
 --- does nothing otherwise.
 checkConsistency :: PM [Statement] -> ParserInfo -> Pos -> PM [Statement]
-checkConsistency (WM (Errors err) ws) _ _ = WM (throwPR err) ws
-checkConsistency (WM (OK ast) ws) pinfo p =
+checkConsistency (PM (WM (Errors err) ws)) _ _ = PM $ WM (throwPR err) ws
+checkConsistency (PM (WM (OK ast) ws)) pinfo p =
   let relMap = getRelations pinfo
       colMap = getAttrList pinfo
       nullMap = getNullables pinfo
-      (WM resPR warns) =
+      (PM (WM resPR warns)) =
            sequencePM (map (checkStatement p relMap colMap nullMap) ast)
-   in (WM resPR (ws ++ warns))
+   in (PM $ WM resPR (ws ++ warns))
 
 -- Calls the corresponding functions for each kind of statement
 -- and passes needed part of parser information.

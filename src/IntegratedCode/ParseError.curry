@@ -2,7 +2,7 @@
 --- Result Monad for Parsers
 ---
 --- @author Jasper Sikorra - jsi@informatik.uni-kiel.de
---- @version January 2014
+--- @version September 2022
 ------------------------------------------------------------------------------
 module ParseError where
 
@@ -17,6 +17,16 @@ err_unknown_fname = "Unknown filename"
 --- The Error Monad
 data PR a = OK a | Errors [PError]
 data PError = PError Pos String
+
+instance Functor PR where
+ fmap = liftPR
+
+instance Applicative PR where
+ pure  = okPR
+
+instance Monad PR where
+ return = okPR
+ (>>=) = bindPR
 
 getPErrorPos :: PError -> Pos
 getPErrorPos (PError p _) = p

@@ -28,10 +28,10 @@ mCDBI = "Database.CDBI.ER"
 --- Invokes the translation of the AST into a string of curry code
 --- in case a valid AST is given, does nothing otherwise.
 translate :: PM [Statement] -> Bool -> String -> Pos -> PM String
-translate (WM (Errors err) ws) _ _ _ = WM (throwPR err) ws
-translate (WM (OK stats) ws) withrundb mModel pos =
-  let (WM resPR warns) = sequencePM (map (transStatement pos mModel) stats )
-   in liftPM showFunction (WM resPR (warns++ws))
+translate (PM (WM (Errors err) ws)) _ _ _ = PM $ WM (throwPR err) ws
+translate (PM (WM (OK stats) ws)) withrundb mModel pos =
+  let (PM (WM resPR warns)) = sequencePM (map (transStatement pos mModel) stats )
+   in liftPM showFunction (PM $ WM resPR (warns++ws))
  where
   -- The list of CExpr representing the statements is concatenated and pretty
   -- printed. To obtain a single-line translation, line feeds are replaced by

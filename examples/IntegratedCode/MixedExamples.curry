@@ -5,11 +5,11 @@
 --- integrated code in a Curry program.
 ------------------------------------------------------------------------------
 
-import RegExp
+import RegExpEff
 import Data.Format
 
 isEmail :: String -> Bool
-isEmail s = s ``regex
+isEmail = match ``regex
   [a-zA-Z0-9]([a-zA-Z0-9\._])*
   @
   [a-zA-Z0-9][a-zA-Z0-9\-]*\.
@@ -17,12 +17,12 @@ isEmail s = s ``regex
   [a-zA-Z]{2,4}''
 
 isURL :: String -> Bool
-isURL s = s ``regex [a-zA-Z0-9][a-zA-Z0-9\-]*\.
-                    ([:alnum:][a-zA-Z0-9\-]*\.)*
-                    [a-zA-Z]{2,4}''
+isURL = match ``regex [a-zA-Z0-9][a-zA-Z0-9\-]*\.
+                      ([:alnum:][a-zA-Z0-9\-]*\.)*
+                      [a-zA-Z]{2,4}''
 
 isListBetween :: String -> Char -> Char -> Bool
-isListBetween l min max = l ``regex [<min>-<max>]*''
+isListBetween s min max = match ``regex [<min>-<max>]*'' s
 
 printList :: [Int] -> IO ()
 printList []     = return ()

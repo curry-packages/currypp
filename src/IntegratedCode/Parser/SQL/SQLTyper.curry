@@ -38,14 +38,14 @@ import SQLParserInfoType
 --- If the first stage fails the second one is not started.
 --- First stage is only started if a valid AST without errors is passed.
 checkTypes :: PM [Statement] -> AttrTypeFM -> Pos -> PM [Statement]
-checkTypes (WM (Errors err) ws) _ _ = WM (throwPR err) ws
-checkTypes (WM (OK ast) ws) types p =
-  let (WM resPR warns) = sequencePM (map (retrieveTypes p types) ast)
+checkTypes (PM (WM (Errors err) ws)) _ _ = PM $ WM (throwPR err) ws
+checkTypes (PM (WM (OK ast) ws)) types p =
+  let (PM (WM resPR warns)) = sequencePM (map (retrieveTypes p types) ast)
    in case resPR of
-           (Errors err) -> (WM (throwPR err) (ws++warns))
-           (OK ast1)    -> let (WM resPR1 warns1) =
+           (Errors err) -> (PM $ WM (throwPR err) (ws++warns))
+           (OK ast1)    -> let (PM (WM resPR1 warns1)) =
                                        sequencePM (map (checkTypCons p) ast1)
-                            in (WM resPR1 (warns1++warns++ws))
+                            in (PM $ WM resPR1 (warns1++warns++ws))
 
 -- --------------------------------first stage -------------------------------
 

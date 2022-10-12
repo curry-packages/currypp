@@ -58,8 +58,8 @@ readParserInfo verb filename = do
 
 -- auxiliary function to check Result after each stage
 checkResult :: PM a -> Either (PM String) (PM a)
-checkResult (WM (Errors err) ws) = Left (WM (throwPR err) ws)
-checkResult pm@(WM (OK _ ) _)    = Right pm
+checkResult (PM (WM (Errors err) ws)) = Left (PM $ WM (throwPR err) ws)
+checkResult pm@(PM (WM (OK _ ) _))    = Right pm
 
 -- Calls the stages of parsing process in the right order
 -- and passes corresponding parts of the parser information.

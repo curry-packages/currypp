@@ -26,10 +26,10 @@ check5 = match ``regex [a-z]+''
 
 -- Examples with parameterized regular expressions:
 
-pregexp1 :: Ord a => a -> a -> [a] -> Bool
+pregexp1 ::  Char -> Char -> [Char] -> Bool
 pregexp1 v1 v2 = match ``regex [<v1>-<v2>]*''
 
-pregexp2 :: Ord a => a -> a -> [a] -> Bool
+pregexp2 :: Int -> Int -> [Int] -> Bool
 pregexp2 v1 v2 = match ``regex (<v1>|<v2>)*''
 
 -- A regular expression containing a complex Curry expression:

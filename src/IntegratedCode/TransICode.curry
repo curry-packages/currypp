@@ -120,8 +120,8 @@ translateIntCode verb model fname s = do
   pinfo <- tryReadParserInfoFile verb model fname
   stw <- concatAllIOPM $ applyLangParsers pinfo
                        $ ciparser fname s
-  putStr (formatWarnings (getWarnings stw))
-  escapePR (discardWarnings stw) formatErrors
+  putStr (formatWarnings (getWarningsPM stw))
+  escapePR (discardWarningsPM stw) formatErrors
 
 --- Try to read parser info file for the SQL preprocessor.
 tryReadParserInfoFile :: Int -> String -> String

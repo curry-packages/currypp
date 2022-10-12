@@ -31,10 +31,10 @@ import Symboltab
 ---@return unchanged PM if it contained errors
 ---        PM with named columns otherwise
 nameStatements ::  PM [Statement] -> Pos -> PM [Statement]
-nameStatements (WM (Errors err) ws) _ = WM (throwPR err) ws
-nameStatements (WM (OK ast) ws)     p =
-  let (WM resPR warns) = sequencePM (map (nameStatement p emptyTable) ast)
-   in (WM resPR (ws ++ warns))
+nameStatements (PM( WM (Errors err) ws)) _ = PM $ WM (throwPR err) ws
+nameStatements (PM (WM (OK ast) ws))     p =
+  let (PM (WM resPR warns)) = sequencePM (map (nameStatement p emptyTable) ast)
+   in (PM $ WM resPR (ws ++ warns))
 
 -- Symboltable structure used for the naming process.
 -- The first finite map saves the notation given by the user,
