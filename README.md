@@ -33,9 +33,11 @@ The parameters are:
 * The name of the output file where the translated code should be stored.
 * If the optional parameter `-o` is given, a copy of the translated code
   is stored in the file `org-filename.CURRYPP`.
-* To preprocess SQL statement, add the option:
+* To preprocess SQL statements, you might add the option
 
        --model:<modelname>_SQLCode.info
+
+  to use a non-standard info file for the database model
 
 
 Writing files with integrated code:
