@@ -25,13 +25,16 @@ import System.Environment   ( getEnv, getArgs, setEnv )
 import System.Process       ( exitWith )
 
 import CPP.DefaultRules     ( translateDefaultRulesAndDetOps )
+import CPP.Config           ( packageVersion )
 import CPP.Contracts        ( translateContracts )
 import TransICode           ( translateIntCode )
 
+------------------------------------------------------------------------------
 cppBanner :: String
 cppBanner = unlines [bannerLine,bannerText,bannerLine]
  where
-   bannerText = "Curry Preprocessor (version of 11/10/2022)"
+   bannerText = "Curry Preprocessor (Version " ++
+                packageVersion ++ " of 12/10/2022)"
    bannerLine = take (length bannerText) (repeat '=')
 
 --- Preprocessor targets, i.e., kind of entities to be preprocessed:
@@ -122,6 +125,7 @@ main = do
 processOptions :: PPOpts -> [String] -> Maybe PPOpts
 processOptions opts optargs = case optargs of
     []                -> Just opts
+    ("--help":_)      -> Just opts { optHelp = True}
     ("-h":_)          -> Just opts { optHelp = True}
     ("-?":_)          -> Just opts { optHelp = True}
     ("-o":os)         -> processOptions opts { optSave = True } os
@@ -178,7 +182,7 @@ usageText = unlines $
  , "               <n>=2 : show more information, e.g., version, timing"
  , "               <n>=3 : show much more information, e.g., used file names"
  , "               <n>=4 : show also transformed Curry program"
- , "-h|-?        : show help message and quit"
+ , "--help|-h|-? : show help message and quit"
  , ""
  , "For target 'defaultrules':"
  , "specscheme   : default translation scheme (as in PADL'16 paper)"
