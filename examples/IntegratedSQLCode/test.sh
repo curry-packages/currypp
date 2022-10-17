@@ -24,6 +24,7 @@ PATH=$CURRYBINDIR:$PATH
 export PATH
 
 cleandir () {
+  $CURRYBINDIR/cypm clean
   $CURRYBINDIR/cleancurry
   /bin/rm -f $LOGFILE *_PUBLIC.curry TEST*.curry
   /bin/rm -f Uni.erdterm Uni_ERDT.term Uni_SQLCode.info Uni.curry Uni.db
@@ -32,12 +33,15 @@ cleandir () {
 
 # compile and execute all tests:
 exectests() {
+  echo "Clean test directory..."
   cleandir
-  # compile model:
+  echo "Install dependencies..."
+  $CURRYBINDIR/cypm install
+  echo "Compile ER model with 'erd2curry'..."
   "$ERD2CURRY" --db `pwd`/Uni.db --cdbi UniERD.curry
-  # fill database:
+  echo "Fill the test database..."
   $CURRYBINDIR/curry $REPL_OPTS :l CreateData :eval main :q
-  # run query tests:
+  echo "Run SQL query tests..."
   curry-check SelectExamples
 }
 
