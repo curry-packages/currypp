@@ -8,7 +8,7 @@
 import HTML.Base
 import Test.Prop
 
-htmlTest1 :: String -> [BaseHtml]
+htmlTest1 :: String -> [StaticHtml]
 htmlTest1 name = ``html
  <html>
 
@@ -23,7 +23,7 @@ htmlTest1 name = ``html
    <h2>{reverse name}
    Bye!''
 
-htmlDoc1 :: [BaseHtml]
+htmlDoc1 :: [StaticHtml]
 htmlDoc1 =
   [htmlStruct "html" []
     [htmlStruct "head" []
@@ -36,15 +36,6 @@ htmlDoc1 =
        htmlStruct "h2" []
         [htmlText "eoJ", htmlText "\n"],
        htmlText "Bye!"]]]
-
-------------------------------------------------------------------------------
--- Partial equality on HTML documents for testing.
-instance Eq BaseHtml where
-  hexp1 == hexp2 = case (hexp1,hexp2) of
-    (BaseText s, BaseText t) -> s == t
-    (BaseStruct t ats hes, BaseStruct t' ats' hes') ->
-                                        t==t' && ats==ats' && hes == hes'
-    _ -> error "BaseHTML.==: cannot compare actions"
 
 ------------------------------------------------------------------------------
 

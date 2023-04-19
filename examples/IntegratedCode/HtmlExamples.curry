@@ -22,7 +22,7 @@ and is inserted as an HTML element.
 -}
 
 test1 :: String -> IO ()
-test1 name = putStrLn $ showBaseHtmls ``html
+test1 name = putStrLn $ showStaticHtmls ``html
  <html>
 
   <head>
