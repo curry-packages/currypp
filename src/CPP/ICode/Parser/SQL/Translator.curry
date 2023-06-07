@@ -5,7 +5,8 @@
 --- The translation is provided as a single line string as
 --- required by currypp.
 ---
---- @author: Julia Krone
+--- @author Julia Krone
+--- @version June 2023
 -- ---------------------------------------------------------
 
 module CPP.ICode.Parser.SQL.Translator(translate) where
@@ -683,64 +684,46 @@ transEntity mModel tab cols vals =
 
 -- Translates list of values to insert.
 transInsertValues :: String -> [ColumnRef] -> [Value] -> [CExpr]
-transInsertValues _ [] _ = []
+transInsertValues _ []    _  = []
 transInsertValues _ (_:_) [] = []
-transInsertValues mModel ((Column _ _ _ nl _):cs) (v:vs) =
-    ((transValue mModel v nl):(transInsertValues mModel cs vs))
+transInsertValues mModel (Column _ _ _ nl _ : cs) (v:vs) =
+  transValue mModel v nl : transInsertValues mModel cs vs
 
 -- ----------------------- common elements --------------------
 
 -- Traslation of table name as used in update, insert and delete.
 transTableName :: String -> Table -> PM CExpr
 transTableName mModel (Table tab _ _) =
-       cleanPM (constF (mModel, entity2Description tab))
+  cleanPM (constF (mModel, entity2Description tab))
 
 -- Translation of values as used in insert statements.
 transValue :: String -> Value -> Bool -> CExpr
-transValue _ (Emb exp _) nullable =
-    if nullable
-       then applyE (CSymbol(pre "Just"))
-                   [(cvar ("("++exp++")"))]
-       else (cvar ("("++exp++")"))
+transValue _ (Emb exp etype) nullable =
+  -- Note: nullable strings are not represented as Maybe String but as String
+  addJustIfNullable (nullable && etype /= S) (cvar ("(" ++ exp ++ ")"))
 transValue _ (IntExp int) nullable =
-    if nullable
-       then applyE (CSymbol(pre "Just"))
-                   [(cvar (show int))]
-       else (cvar (show int))
+  addJustIfNullable nullable (cvar (show int))
 transValue _ (FloatExp float) nullable =
-    if nullable
-       then applyE (CSymbol (pre "Just"))
-                   [(cvar(show float))]
-       else (cvar(show float))
+  addJustIfNullable nullable (cvar(show float))
 transValue _ (StringExp string) nullable =
-    if nullable
-       then applyE (CSymbol (pre "Just"))
-                   [string2ac string]
-       else string2ac string
+  -- Note: nullable strings are not represented as Maybe String but as String
+  string2ac string
 transValue _ (DateExp date) nullable =
-    if nullable
-       then applyE (CSymbol (pre "Just"))
-                   [(applyF ("Time", "toClockTime")
-                            [(cvar (show date))])]
-       else applyF ("Time", "toClockTime")
-                   [(cvar (show date))]
+  addJustIfNullable nullable
+    (applyF ("Time", "toClockTime") [(cvar (show date))])
 transValue _ (BoolExp bool) nullable =
-    if nullable
-       then applyE (CSymbol (pre "Just"))
-                   [(cvar (show bool))]
-       else (cvar (show bool))
+  addJustIfNullable nullable (cvar (show bool))
 transValue _ (CharExp char) nullable =
-    if nullable
-       then applyE (CSymbol (pre "Just"))
-                   [(cvar (show char))]
-       else (cvar (show char))
+  addJustIfNullable nullable (cvar (show char))
 transValue mModel (KeyExp tab int) nullable =
-  if nullable then applyE (CSymbol (pre "Just"))
-                          [(applyE (CSymbol (mModel, ((firstUp tab)++"ID")))
-                                   [(cvar(show int))])]
-              else (applyE (CSymbol (mModel, ((firstUp tab)++"ID")))
-                           [(cvar(show int))])
+  addJustIfNullable nullable
+    (applyE (CSymbol (mModel, firstUp tab ++ "ID")) [cvar (show int)])
 transValue _ AbsNull _ = CSymbol (pre "Nothing")
+
+addJustIfNullable :: Bool -> CExpr -> CExpr
+addJustIfNullable nullable exp =
+  if nullable then applyE (CSymbol (pre "Just")) [exp]
+              else exp
 
 -- Translation of values as used in conditions, update and case-expressions.
 transCondValue :: Pos -> String -> Value ->  PM CExpr

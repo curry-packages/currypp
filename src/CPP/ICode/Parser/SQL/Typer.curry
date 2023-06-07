@@ -555,24 +555,21 @@ checkValVal p v1@(IntExp int) v2 =
    case v2 of
      (IntExp _)  -> cleanPM (v1,v2)
      (Emb exp _) -> warnOKPM (v1, (Emb exp I))
-                             [(p, ("Information: embedded expression is "++
-                                   "assumed to be of type Int"))]
+                             [(p, infoEmbType "Int")]
      _           -> throwPM p ("Type error: Int ("++(show int)++") and "++
                                (typeToStr (typeOf v2))++" are not compatible.")
 checkValVal p v1@(FloatExp f) v2 =
    case v2 of
      (FloatExp _) -> cleanPM (v1,v2)
      (Emb exp _)  -> warnOKPM (v1, (Emb exp F))
-                              [(p, ("Information: embedded expression is "++
-                                    "assumed to be of type Float"))]
+                              [(p, infoEmbType "Float")]
      _            -> throwPM p ("Type error: Float ("++(show f)++") and "++
                                 (typeToStr (typeOf v2))++" are not compatible.")
 checkValVal p v1@(StringExp str) v2 =
    case v2 of
      (StringExp _) -> cleanPM (v1,v2)
      (Emb exp _)   -> warnOKPM (v1, (Emb exp S))
-                               [(p, ("Information: embedded expression is "++
-                                      "assumed to be of type String"))]
+                               [(p, infoEmbType "String")]
      _             -> throwPM p ("Type error: String ("++str++") and "++
                                  (typeToStr (typeOf v2))++" are not compatible.")
 checkValVal p v1@(DateExp d) v2 =
@@ -581,24 +578,21 @@ checkValVal p v1@(DateExp d) v2 =
                                 (checkDate p v1)
                                 (checkDate p v2)
      (Emb exp _)  -> warnOKPM (v1, (Emb exp D))
-                              [(p, ("Information: embedded expression is "++
-                                    "assumed to be of type Date"))]
+                              [(p, infoEmbType "Date")]
      _            -> throwPM p ("Type error: Date ("++(show d)++") and "++
                                 (typeToStr (typeOf v2))++" are not compatible.")
 checkValVal p v1@(BoolExp b) v2 =
    case v2 of
      (BoolExp _)  -> cleanPM (v1,v2)
      (Emb exp _)  -> warnOKPM (v1, (Emb exp B))
-                              [(p, ("Information: embedded expression is "++
-                                    "assumed to be of type Bool"))]
+                              [(p, infoEmbType "Bool")]
      _            -> throwPM p ("Type error: Boolean ("++(show b)++") and "++
                                 (typeToStr (typeOf v2))++" are not compatible.")
 checkValVal p v1@(CharExp c) v2 =
    case v2 of
      (CharExp _)  -> cleanPM (v1,v2)
      (Emb exp _)  -> warnOKPM (v1, (Emb exp C))
-                              [(p, ("Information: embedded expression is "++
-                                    "assumed to be of type Char"))]
+                              [(p, infoEmbType "Char")]
      _            -> throwPM p ("Type error: Char ("++(show c)++") and "++
                                 (typeToStr (typeOf v2))++" are not compatible.")
 checkValVal p v1@(Emb _ _) v2 =
@@ -614,6 +608,10 @@ checkValVal p (KeyExp _ _) _ = throwPM p ("The CDBI-Interface does not allow"
 checkValVal p (AbsNull) _ = throwPM p ("The use of Null-values in "
                                         ++"case-expressions is not "
                                         ++"supported by the CDBI-Interface.")
+
+infoEmbType :: String -> String
+infoEmbType t =
+  "Information: embedded expression is assumed to be of type " ++ t
 
 -- Compares type of a column to type of a value.
 -- Throws an error if they are not of the same type.
