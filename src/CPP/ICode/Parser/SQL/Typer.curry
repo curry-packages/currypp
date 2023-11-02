@@ -556,7 +556,7 @@ checkValVal p v1@(IntExp int) v2 =
      (IntExp _)  -> cleanPM (v1,v2)
      (Emb exp _) -> warnOKPM (v1, (Emb exp I))
                              [(p, infoEmbType "Int")]
-     _           -> throwPM p ("Type error: Int ("++(show int)++") and "++
+     _           -> throwPM p ("Type error: Int (" ++ show int ++ ") and " ++
                                (typeToStr (typeOf v2))++" are not compatible.")
 checkValVal p v1@(FloatExp f) v2 =
    case v2 of
@@ -601,13 +601,15 @@ checkValVal p v1@(Emb _ _) v2 =
                                ++" not possible to compare "
                                ++"two embedded expressions.")
       _         -> checkValVal p v2 v1
-checkValVal p (KeyExp _ _) _ = throwPM p ("The CDBI-Interface does not allow"
-                                           ++" the use of (foreign) key values "
-                                           ++"in case exp.")-- this is actually not possible
-                                          --cause KeyExp are dependent on a referencing column
-checkValVal p (AbsNull) _ = throwPM p ("The use of Null-values in "
-                                        ++"case-expressions is not "
-                                        ++"supported by the CDBI-Interface.")
+checkValVal p (KeyExp _ _) _ =
+  throwPM p ("The CDBI-Interface does not allow"
+             ++ " the use of (foreign) key values "
+             ++ "in case exp.") -- this is actually not possible since
+                                -- KeyExp are dependent on a referencing column
+checkValVal p (AbsNull) _ =
+  throwPM p ("The use of Null-values in "
+             ++ "case-expressions is not "
+             ++ "supported by the CDBI-Interface.")
 
 infoEmbType :: String -> String
 infoEmbType t =
@@ -622,40 +624,35 @@ checkColVal p c@(Column _ col I _ _) val =
    case val of
       (IntExp _)  -> cleanPM (c,val)
       (Emb exp _) -> warnOKPM (c, (Emb exp I))
-                              [(p, ("Information: embedded expression is "++
-                                    "assumed to be of type Int"))]
+                              [(p, infoEmbType "Int")]
       _           -> throwPM p ("Type error: Int ("++col++") and "++
                                 (typeToStr (typeOf val))++" are not compatible.")
 checkColVal p c@(Column _ col F _ _) val =
    case val of
       (FloatExp _)-> cleanPM (c,val)
       (Emb exp _) -> warnOKPM (c, (Emb exp F))
-                              [(p, ("Information: embedded expression is "++
-                                    "assumed to be of type Float"))]
+                              [(p, infoEmbType "Float")]
       _           -> throwPM p ("Type error: Float ("++col++") and "++
                                 (typeToStr (typeOf val))++" are not compatible.")
 checkColVal p c@(Column _ col B _ _) val =
    case val of
       (BoolExp _) -> cleanPM (c,val)
       (Emb exp _) -> warnOKPM (c, (Emb exp B))
-                              [(p, ("Information: embedded expression is "++
-                                    "assumed to be of type Bool"))]
+                              [(p, infoEmbType "Bool")]
       _           -> throwPM p ("Type error: Bool ("++col++") and "++
                                 (typeToStr (typeOf val))++" are not compatible.")
 checkColVal p c@(Column _ col C _ _) val =
    case val of
       (CharExp _) -> cleanPM (c,val)
       (Emb exp _) -> warnOKPM (c, (Emb exp C))
-                              [(p, ("Information: embedded expression is "++
-                                    "assumed to be of type Char"))]
+                              [(p, infoEmbType "Char")]
       _           -> throwPM p ("Type error: Char ("++col++") and "++
                                 (typeToStr (typeOf val))++" are not compatible.")
 checkColVal p c@(Column _ col S _ _) val =
    case val of
       (StringExp _) -> cleanPM (c,val)
       (Emb exp _) -> warnOKPM (c, (Emb exp S))
-                              [(p, ("Information: embedded expression is "++
-                                    "assumed to be of type String"))]
+                              [(p, infoEmbType "String")]
       _           -> throwPM p ("Type error: String ("++col++") and "++
                                 (typeToStr (typeOf val))++" are not compatible.")
 checkColVal p c@(Column _ col D _ _) val =
@@ -663,17 +660,14 @@ checkColVal p c@(Column _ col D _ _) val =
       (DateExp _) -> liftPM (\date -> (c, date))
                             (checkDate p val)
       (Emb exp _) -> warnOKPM (c, (Emb exp D))
-                              [(p, ("Information: embedded expression is "++
-                                    "assumed to be of type Date"))]
+                              [(p, infoEmbType "Date")]
       _           -> throwPM p ("Type error: Date ("++col++") and "++
                                 (typeToStr (typeOf val))++" are not compatible.")
 checkColVal p c@(Column _ _ (Key reftab) _ _) val =
     case val of
        (IntExp i) -> cleanPM (c, (KeyExp reftab i))
        (Emb exp _) -> warnOKPM (c, (Emb exp (Key reftab)))
-                               [(p, ("Information: embedded expression is "++
-                                     "assumed to be of type "
-                                      ++(firstUp reftab)++"ID"))]
+                               [(p, infoEmbType (firstUp reftab ++ "ID"))]
        _           -> throwPM p ("Type error: "++reftab++"ID and "++
                                 (typeToStr (typeOf val))++" are not compatible.")
 
@@ -728,16 +722,15 @@ checkColCol p c1@(Column _ _ (Key tab1) _ _) c2 =
                                     (typeToStr (columnTyp c2)))
 
 checkDate :: Pos -> Value -> PM Value
-checkDate p date =
-  case date of
-    (DateExp (CalendarTime y m d _ _ _ _ )) ->
-              if (y >= 1970) && (1 <= m) && (m <= 12) && (1<= d) && (d <= 31)
-                then cleanPM date
-                else warnOKPM (date)
-                     [(p, ("It seems like your date-expression is not in the"++
-                           " correct form: year(four-digit) month day hour"++
-                           " minute second"))]
-    _  -> cleanPM date
+checkDate p date = case date of
+  DateExp (CalendarTime y m d _ _ _ _ ) ->
+     if (y >= 1970) && (1 <= m) && (m <= 12) && (1<= d) && (d <= 31)
+       then cleanPM date
+       else warnOKPM date
+              [(p, "It seems like your date-expression is not in the"++
+                   " correct form: year(four-digit) month day hour"++
+                     " minute second")]
+  _  -> cleanPM date
 
 typeToStr :: Type -> String
 typeToStr I = "Int"
