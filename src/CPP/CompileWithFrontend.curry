@@ -2,7 +2,7 @@
 --- Auxiliary operations to compile additionally imported modules
 --- with the front end.
 
-module CPP.CompileWithFrontend
+module CPP.CompileWithFrontend ( compileImportedModule )
  where
 
 import Control.Monad               ( when )
@@ -19,9 +19,9 @@ import System.FrontendExec
 compileImportedModule :: Int -> String -> IO ()
 compileImportedModule verb modname = do
   mapM (compileModuleTo verb modname) [ACY, UACY]
-  compileSetFunctions2Flat
+  compileModule2Flat
  where
-  compileSetFunctions2Flat
+  compileModule2Flat
     | curryCompiler == "kics2"
     = compileModuleTo verb modname TFCY
     | curryCompiler == "pakcs"

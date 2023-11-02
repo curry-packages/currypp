@@ -1,7 +1,7 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=contracts #-}
 
 -- straight selection sort with specification
-import Control.SetFunctions
+import Control.Search.SetFunctions
 
 perm []     = []
 perm (x:xs) = insert (perm xs)

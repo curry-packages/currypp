@@ -1,6 +1,6 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules #-}
 
-import Control.SetFunctions
+import Control.Search.SetFunctions
 import Test.Prop
 
 -- Dijsktra's Dutch National Flag problem with functional patterns

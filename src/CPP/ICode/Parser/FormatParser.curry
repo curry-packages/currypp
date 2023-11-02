@@ -24,7 +24,7 @@
 --- `printf`. Not all parsable expressions are usable.__
 ---
 --- @author Jasper Sikorra (with changes by Michael Hanus)
---- @version June 2021
+--- @version November 2023
 ------------------------------------------------------------------------------
 module CPP.ICode.Parser.FormatParser ( parse ) where
 
@@ -34,7 +34,7 @@ import Parser    -- from package fl-parser
 import Data.Char
 import Numeric              ( readNat )
 
-import Control.AllValues    ( getOneSolution )
+import Control.Search.AllValues ( getOneValue )
 
 import CPP.ICode.ParseTypes
 
@@ -169,8 +169,10 @@ addVarsToSpecifiers po (q:qs) varis@(v:vs) = case q of
 --- Parse a format string expression
 readExpression :: Pos -> String -> IO (PM Expression)
 readExpression p st =
-  do x <- getOneSolution (\a -> expression a st =:= "")
+  do x <- getOneValue (parseExp st)
      return $ maybe (throwPM p "Parse error in format expression.") cleanPM x
+ where
+  parseExp s | expression a s =:= "" = a  where a free
 
 -- The whole expression
 expression :: ([Either (String) Specifier],[String]) -> String -> String

@@ -34,7 +34,7 @@ cppBanner :: String
 cppBanner = unlines [bannerLine,bannerText,bannerLine]
  where
    bannerText = "Curry Preprocessor (Version " ++
-                packageVersion ++ " of 07/06/2023)"
+                packageVersion ++ " of 02/11/2023)"
    bannerLine = take (length bannerText) (repeat '=')
 
 --- Preprocessor targets, i.e., kind of entities to be preprocessed:

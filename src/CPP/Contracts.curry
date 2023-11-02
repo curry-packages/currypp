@@ -515,7 +515,7 @@ infixIDs =  "~!@#$%^&*+-=<>?./|\\:"
 ------------------------------------------------------------------------
 -- Auxiliaries
 
--- An operation of the module Control.SetFunctions:
+-- An operation of the module Control.Search.SetFunctions:
 sfMod :: String -> QName
 sfMod f = (setFunMod,f)
 

@@ -21,6 +21,6 @@ checkRequiredImport currmod reqmod imps =
 
 --- Name of the set functions module.
 setFunMod :: String
-setFunMod = "Control.SetFunctions"
+setFunMod = "Control.Search.SetFunctions"
 
 ------------------------------------------------------------------------------

@@ -1,15 +1,14 @@
 {
     "name": "currypp",
-    "version": "3.1.0",
+    "version": "3.2.0",
     "author": "Michael Hanus <mh@informatik.uni-kiel.de>",
     "synopsis": "The standard preprocessor of Curry",
     "category": [ "Programming", "Analysis" ],
     "license": "BSD-3-Clause",
     "licenseFile": "LICENSE",
     "dependencies": {
-        "base"          : ">= 3.0.0, < 4.0.0",
+        "base"          : ">= 3.2.0, < 4.0.0",
         "abstract-curry": ">= 3.0.0, < 4.0.0",
-        "allvalues"     : ">= 3.0.0, < 4.0.0",
         "cass-analysis" : ">= 3.0.0, < 4.0.0",
         "cass"          : ">= 3.0.0, < 4.0.0",
         "cdbi"          : ">= 3.0.0, < 4.0.0",
@@ -26,7 +25,6 @@
         "process"       : ">= 3.0.0, < 4.0.0",
         "printf"        : ">= 3.0.0, < 4.0.0",
         "regexp"        : ">= 4.0.0",
-        "setfunctions"  : ">= 3.0.0, < 4.0.0",
         "time"          : ">= 3.0.0, < 4.0.0",
         "wl-pprint"     : ">= 3.0.0, < 4.0.0",
         "xml"           : ">= 3.0.0, < 4.0.0"

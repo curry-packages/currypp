@@ -1,7 +1,7 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=contracts #-}
 {-# OPTIONS_FRONTEND -Wnone #-}
 
-import Control.SetFunctions
+import Control.Search.SetFunctions
 import Test.Contract
 import Test.Prop
 

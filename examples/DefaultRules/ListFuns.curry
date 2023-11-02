@@ -1,7 +1,7 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules #-}
 {-# OPTIONS_FRONTEND -Wnone #-}
 
-import Control.SetFunctions
+import Control.Search.SetFunctions
 import Test.Prop
 
 -- Warning: these redefinitions work fine with KiCS2, but with PAKCS

@@ -1,7 +1,7 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules #-}
 
 import Test.Prop
-import Control.SetFunctions
+import Control.Search.SetFunctions
 
 -- Bubble sort formulation with default rule
 
