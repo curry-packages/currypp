@@ -1,6 +1,5 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules #-}
 
-import Control.Search.SetFunctions
 import Test.Prop
 
 -- Operation to delete suffixes of the fornm ".0"

@@ -11,7 +11,7 @@
 --- > Declarative Languages (PADL 2012), pp. 33-47, Springer LNCS 7149, 2012
 ---
 --- @author Michael Hanus
---- @version November 2021
+--- @version January 2024
 ------------------------------------------------------------------------
 
 module CPP.Contracts ( main, translateContracts )
@@ -233,9 +233,7 @@ transformProgram verb opts funposs allfdecls detinfo
       -- compute postconditions actually used for contract checking:
       contractpcs  = postdecls++newpostconds
   checkRequiredImport mname contractMod imps
-  checkRequiredImport mname setFunMod imps
   unless (contractMod `elem` imps) $ compileImportedModule verb contractMod
-  unless (setFunMod   `elem` imps) $ compileImportedModule verb setFunMod
   return $ CurryProg
     mname (nub (contractMod : setFunMod : imps))
     dfltdecl clsdecls instdecls tdecls

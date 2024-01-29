@@ -1,6 +1,5 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules #-}
 
-import Control.Search.SetFunctions
 import Test.Prop
 
 -- Example: predicate to check for float strings

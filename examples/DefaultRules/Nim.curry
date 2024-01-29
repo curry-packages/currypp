@@ -1,7 +1,6 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules #-}
 {-# OPTIONS_FRONTEND -Wnone #-}
 
-import Control.Search.SetFunctions
 import Test.Prop
 
 -- A simple implementation of a two-person game (here: Nim) with default rules

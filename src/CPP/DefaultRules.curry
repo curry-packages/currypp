@@ -36,7 +36,7 @@
 --- see the example programs in the directory `examples/DefaultRules`).
 ---
 --- @author Michael Hanus
---- @version November 2021
+--- @version January 2024
 -----------------------------------------------------------------------------
 
 module CPP.DefaultRules ( translateDefaultRulesAndDetOps )
@@ -167,13 +167,10 @@ translateProg verb trscm
   -- now we do not have to check the correct usage of default rules...
   if null deffuncs && null detfuncnames
     then return Nothing
-    else do
-      checkRequiredImport mn setFunMod imps
-      unless (setFunMod `elem` imps) $
-        compileImportedModule verb setFunMod
-      return $ Just (detfuncnames,
-                     CurryProg mn newimports dfltdecl clsdecls
-                               instdecls tdecls newfdecls ops)
+    else return $
+      Just (detfuncnames,
+            CurryProg mn newimports dfltdecl clsdecls
+                      instdecls tdecls newfdecls ops)
  where
   newimports       = if setFunMod `elem` imps then imps else setFunMod:imps
   detfuncnames     = map funcName (filter isDetFun fdecls)

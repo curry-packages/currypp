@@ -64,7 +64,7 @@
         "main": "main.tex"
     },
     "source": {
-        "git": "https://git.ps.informatik.uni-kiel.de/curry-packages/currypp.git",
+        "git": "https://github.com/curry-packages/currypp.git",
         "tag": "$version"
     }
 }

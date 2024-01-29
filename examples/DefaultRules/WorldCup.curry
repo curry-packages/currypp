@@ -1,13 +1,12 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules #-}
 {-# OPTIONS_FRONTEND -Wnone #-}
 
-import Control.Search.SetFunctions
+import Data.Char (isDigit)
 import Test.Prop
 
 -- Example: parse World Cup soccer scores (e.g., "_:_", "3:2")
 
-import Data.Char (isDigit)
-
+parse :: String -> (String, String, Maybe (Int,Int))
 parse (team1++" _:_ "++team2) = (team1, team2, Nothing)
 parse (team1++[' ',x,':',y,' ']++team2)
   | isDigit x && isDigit y

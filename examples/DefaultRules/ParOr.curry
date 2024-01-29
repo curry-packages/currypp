@@ -1,7 +1,6 @@
 {-# OPTIONS_FRONTEND -F --pgmF=currypp --optF=defaultrules #-}
 {-# OPTIONS_FRONTEND -Wnone #-}
 
-import Control.Search.SetFunctions
 import Test.Prop
 
 -- Parallel or with default rules:
