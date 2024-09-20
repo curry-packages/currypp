@@ -16,6 +16,7 @@
 --- @author: Julia Krone
 --- @version: 0.1
 -- ---------------------------------------------------------------------
+{-# OPTIONS_FRONTEND -Wno-incomplete-patterns #-}
 
 module CPP.ICode.Parser.SQL.Consistency(checkConsistency) where
 
@@ -185,25 +186,25 @@ checkTableRefs :: Pos ->
                   Maybe JoinClause ->
                   Map.Map String (String, [String]) ->
                   Either String (Map.Map String (String, [String]))
-checkTableRefs p colMap (Table name al nAl) join fm =
-   let columns = Map.lookup (lowerCase name) colMap
-    in case columns of
-         Nothing  -> Left name
-         (Just (tn, cols)) ->
-              case join of
-                Nothing  -> Right (Map.insert (lowerCase name) (tn,cols) fm)
-                (Just (CrossJoin tab j)) ->
-                       checkTableRefs p
-                                      colMap
-                                      tab
-                                      j
-                                      (Map.insert (lowerCase name) (tn,cols) fm)
-                (Just (InnerJoin tab _ j)) ->
-                       checkTableRefs p
-                                      colMap
-                                      tab
-                                      j
-                                      (Map.insert (lowerCase name) (tn,cols) fm)
+checkTableRefs p colMap (Table name _ _) join fm =
+  let columns = Map.lookup (lowerCase name) colMap
+  in case columns of
+       Nothing  -> Left name
+       (Just (tn, cols)) ->
+            case join of
+              Nothing  -> Right (Map.insert (lowerCase name) (tn,cols) fm)
+              (Just (CrossJoin tab j)) ->
+                     checkTableRefs p
+                                    colMap
+                                    tab
+                                    j
+                                    (Map.insert (lowerCase name) (tn,cols) fm)
+              (Just (InnerJoin tab _ j)) ->
+                     checkTableRefs p
+                                    colMap
+                                    tab
+                                    j
+                                    (Map.insert (lowerCase name) (tn,cols) fm)
 
 checkJoinConds :: Pos ->
                   Table ->
@@ -561,16 +562,16 @@ getNullColumns nullables tab (n:ns) cols@((Column _ col _ _ _):cs) cnt nulls =
 insertNullValues :: String -> [Int] -> [Value] -> [Value]
 insertNullValues tab nulls vals =
   if 0 `elem` nulls
-     then (KeyExp tab 42):(insertNullValues' (delete 0 nulls) 1 vals)
-     else (KeyExp tab 42):(insertNullValues' nulls 1 (tail vals))
-  where insertNullValues' [] _ [] = []
-        insertNullValues' [] _ (v:vs) = (v:vs)
-        insertNullValues' (_:ns) cnt [] =
-                      AbsNull:(insertNullValues' ns cnt [])
-        insertNullValues' (n:ns) cnt (v:vs) =
-           if cnt `elem` (n:ns)
-            then AbsNull:(insertNullValues' (delete cnt (n:ns)) (cnt+1) (v:vs))
-            else v:(insertNullValues' (n:ns) (cnt+1) vs)
+    then (KeyExp tab 42):(insertNullValues' (delete 0 nulls) 1 vals)
+    else (KeyExp tab 42):(insertNullValues' nulls 1 (tail vals))
+ where
+  insertNullValues' [] _ [] = []
+  insertNullValues' [] _ (v:vs) = (v:vs)
+  insertNullValues' (_:ns) cnt []     = AbsNull:(insertNullValues' ns cnt [])
+  insertNullValues' (n:ns) cnt (v:vs) =
+    if cnt `elem` (n:ns)
+      then AbsNull:(insertNullValues' (delete cnt (n:ns)) (cnt+1) (v:vs))
+      else v:(insertNullValues' (n:ns) (cnt+1) vs)
 
 -- Inserts all columns for referenced table as fetched from the parser info
 -- module into the AST whether they were given before or not. That's needed
@@ -582,8 +583,8 @@ insertColumnRefs :: AttributesFM ->
 insertColumnRefs colMap nullMap (Table name _ _) =
   let cols = Map.lookup (lowerCase name) colMap
    in case cols of
-         (Just (tab,cs)) -> cleanPM (map (buildColRef nullMap name) cs)
-         Nothing         -> cleanPM []
+         (Just (_,cs)) -> cleanPM (map (buildColRef nullMap name) cs)
+         Nothing       -> cleanPM []
 
 buildColRef :: NullableFM -> String -> String -> ColumnRef
 buildColRef nullMap tab col =

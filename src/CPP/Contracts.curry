@@ -281,7 +281,8 @@ genPostCond4Spec _ allfdecls detinfo postdecls
                              allfdecls)
      gspecname = (m,f++"'g")
      gspec     = cfunc gspecname ar Private
-                  (CQualType (CContext ((pre "Eq", gtype) : clscons))
+                  (CQualType
+                   (CContext (singleCConstraint (pre "Eq") gtype : clscons))
                    ((resultType texp ~> gtype) ~> replaceResultType texp gtype))
                   [let gsargvars = map (\i -> (i,"x"++show i)) [1..ar]
                    in  simpleRule (CPVar varg : map CPVar gsargvars)
@@ -310,7 +311,7 @@ genPostCond4Spec _ allfdecls detinfo postdecls
        ("Parametric postcondition for '"++fname++
         "' (generated from specification). "++oldcmt)
        (m,fpgenname) (ar+2) Private
-       (CQualType (CContext ((pre "Eq", gtype) : clscons))
+       (CQualType (CContext (singleCConstraint (pre "Eq") gtype : clscons))
                   ((resultType texp ~> gtype) ~> extendFuncType texp boolType))
        [if null oldfpostc
         then simpleRule (map CPVar (varg:argvars)) postcheck
@@ -341,14 +342,16 @@ genPostCond4Spec _ allfdecls detinfo postdecls
 -- sure that each type constructor has an Eq instance.
 type2EqConstraints :: CTypeExpr -> [CConstraint]
 type2EqConstraints texp =
-  map (\tv -> (pre "Eq",CTVar tv)) (nub (tvarsOfType texp))
+  map (\tv -> singleCConstraint (pre "Eq") (CTVar tv))
+      (nub (tvarsOfType texp))
 
 -- Transform a type into Eq constraints for all type variables occurring
 -- in this type. Note: this is not sufficient since one needs also be
 -- sure that each type constructor has an Eq instance.
 type2ShowConstraints :: CTypeExpr -> [CConstraint]
 type2ShowConstraints texp =
-  map (\tv -> (pre "Show",CTVar tv)) (nub (tvarsOfType texp))
+  map (\tv -> singleCConstraint (pre "Show") (CTVar tv))
+      (nub (tvarsOfType texp))
 
 -- Extends a qualified type with Show constraints for all type variables
 -- and Eq constraints for all type variables of the result type.

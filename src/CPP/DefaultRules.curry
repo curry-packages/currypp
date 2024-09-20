@@ -156,7 +156,7 @@ showQName (qn,fn) = "'" ++ qn ++ "." ++ fn ++ "'"
 
 translateProg :: Int -> TransScheme -> CurryProg
               -> IO (Maybe ([QName],CurryProg))
-translateProg verb trscm
+translateProg _ trscm
   prog@(CurryProg mn imps dfltdecl clsdecls instdecls tdecls fdecls ops) = do
   let usageerrors = checkDefaultRules prog
   unless (null usageerrors) $ do

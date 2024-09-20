@@ -17,6 +17,7 @@
 --- @author: Julia Krone
 --- @version: 0.1
 -- --------------------------------------------------------------------------
+{-# OPTIONS_FRONTEND -Wno-incomplete-patterns #-}
 
 module CPP.ICode.Parser.SQL.Typer(checkTypes) where
 
@@ -438,8 +439,8 @@ checkAssign p (Assign col@(Column (Unique tab) _ t _ _) val) =
                   _       -> liftPM (\(chCol, chVal) -> Assign chCol chVal)
                                     (checkColVal p col val)
 -- this should not happen at this stage anymore.
-checkAssign p (Assign col@(Column (Def _ ) name _ _ _) _) =
-    throwPM p ("Column "++name++" could not be related to any table.")
+checkAssign p (Assign (Column (Def _ ) name _ _ _) _) =
+  throwPM p ("Column "++name++" could not be related to any table.")
 
 
 -- -------------------------- insert - second stage ---------------------------

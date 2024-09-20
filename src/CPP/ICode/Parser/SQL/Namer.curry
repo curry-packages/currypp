@@ -8,6 +8,7 @@
 ---@author: Julia Krone
 ---@version: 0.1
 -- ------------------------------------------------------------------------
+{-# OPTIONS_FRONTEND -Wno-incomplete-patterns #-}
 
 module CPP.ICode.Parser.SQL.Namer(nameStatements) where
 

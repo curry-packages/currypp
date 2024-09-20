@@ -8,6 +8,7 @@
 --- @author Julia Krone
 --- @version June 2023
 -- ---------------------------------------------------------
+{-# OPTIONS_FRONTEND -Wno-incomplete-patterns #-}
 
 module CPP.ICode.Parser.SQL.Translator(translate) where
 
@@ -31,18 +32,18 @@ mCDBI = "Database.CDBI.ER"
 translate :: PM [Statement] -> Bool -> String -> Pos -> PM String
 translate (PM (WM (Errors err) ws)) _ _ _ = PM $ WM (throwPR err) ws
 translate (PM (WM (OK stats) ws)) withrundb mModel pos =
-  let (PM (WM resPR warns)) = sequencePM (map (transStatement pos mModel) stats )
-   in liftPM showFunction (PM $ WM resPR (warns++ws))
+  let (PM (WM resPR warns)) = sequencePM (map (transStatement pos mModel) stats)
+  in liftPM showFunction (PM $ WM resPR (warns++ws))
  where
   -- The list of CExpr representing the statements is concatenated and pretty
   -- printed. To obtain a single-line translation, line feeds are replaced by
   -- space characters and indentation is removed
-  showFunction stats =
+  showFunction stats0 =
     let finExpr = if withrundb
                     then applyF (mCDBI, "runWithDB")
                                 [constF (mModel, "sqliteDBFile"),
-                                 concatStatements stats]
-                    else concatStatements stats
+                                 concatStatements stats0]
+                    else concatStatements stats0
         finStr = (pPrint (ppCExpr defaultOptions finExpr))
         newLines = splitOn ['\n'] finStr
     in '(' : removeIndents (intercalate [' '] newLines) ++ ")"
@@ -705,7 +706,7 @@ transValue _ (IntExp int) nullable =
   addJustIfNullable nullable (cvar (show int))
 transValue _ (FloatExp float) nullable =
   addJustIfNullable nullable (cvar(show float))
-transValue _ (StringExp string) nullable =
+transValue _ (StringExp string) _ =
   -- Note: nullable strings are not represented as Maybe String but as String
   string2ac string
 transValue _ (DateExp date) nullable =
